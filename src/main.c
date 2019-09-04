@@ -1,6 +1,8 @@
 #include "avr/io.h"
 #include "uart.h"
+#include "sram.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 #define F_CPU 4000000
 #include "util/delay.h"
@@ -11,19 +13,34 @@
 
 
 void main() {
+  String_Init(MYUBRR);
+  SRAM_init();
+  SRAM_test();
+}
 
-  USART_Init(MYUBRR);
-  fdevopen(USART_Transmit, USART_Receive);
+
+/* //Latch test
+  DDRA = (0xFF);
+  DDRE = (0x02);
+  PORTA = 0;
+  PORTE = 0;
+  PORTA = (1 << PA1);
 
   while (1) {
-    //USART_Transmit('A');
-    //SquareWaveTest();
-    //printf(USART_Receive());
 
-
+    _delay_ms(10000);
+    PORTE = (1 << PE1);
+    _delay_ms(10000);
+    PORTE = 0;
   }
 
-}
+*/
+
+
+  //USART_Init(MYUBRR);
+  //fdevopen(USART_Transmit, USART_Receive);
+
+
 /*
 void SquareWaveTest(){
 

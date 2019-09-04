@@ -25,3 +25,11 @@ unsigned char USART_Receive(void){
     //get and return recieved data from buffer
     return UDR0;
 }
+
+void String_Init(unsigned int ubrr){
+  USART_Init(ubrr);
+  fdevopen(USART_Transmit, USART_Receive);
+}
+
+//USART_Init(MYUBRR);
+//fdevopen(USART_Transmit, USART_Receive);
