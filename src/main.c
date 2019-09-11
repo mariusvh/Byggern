@@ -3,19 +3,30 @@
 #include "sram.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "adc.h"
 
 #define F_CPU 4000000
 #include "util/delay.h"
-
 #define FOSC 4915200 //Clock speed
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1
 
 
 void main() {
+  /*
   String_Init(MYUBRR);
   SRAM_init();
-  SRAM_test();
+  SRAM_test(); %02X
+  */
+  String_Init(MYUBRR);
+  ADC_init();
+//  ADC_setChannel(1);
+
+  while (1) {
+    //uint8_t variable = ADC_read(1);//random name
+    //printf("Channel 1: %02X \n", variable);
+    printf("Channel 1 digital: %d\n", ADC_read2(4) );
+  }
 }
 
 
