@@ -13,19 +13,11 @@
 
 
 void main() {
-  /*
-  String_Init(MYUBRR);
-  SRAM_init();
-  SRAM_test(); %02X
-  */
   String_Init(MYUBRR);
   ADC_init();
-//  ADC_setChannel(1);
-
   while (1) {
-    //uint8_t variable = ADC_read(1);//random name
-    //printf("Channel 1: %02X \n", variable);
-    printf("Channel 1 digital: %d\n", ADC_read2(4) );
+	  printf("X position: %d\n", ADC_read_X_joystick() );
+	  printf("Y position: %d\n", ADC_read_Y_joystick());
   }
 }
 
