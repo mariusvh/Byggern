@@ -9,14 +9,23 @@
 #define T_RI 0.4
 
 void ADC_init(void);
+
 uint8_t ADC_read(uint8_t channel);
+
 uint8_t ADC_read_X_joystick(void);
+
 uint8_t ADC_read_Y_joystick(void);
+
 uint8_t ADC_read_right_slider(void);
-uint8_t ADC_read_left_slider(void)
+
+uint8_t ADC_read_left_slider(void);
+
 void ADC_setCS(uint8_t value);
+
 void ADC_setChannel(uint8_t channel);
+
 void ADC_setWR(uint8_t value);
+
 void ADC_setRD(uint8_t value);
 
 

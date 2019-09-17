@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "adc.h"
+#include "joystick.h"
 
 #define F_CPU 4000000
 #include "util/delay.h"
@@ -15,9 +16,13 @@
 void main() {
   String_Init(MYUBRR);
   ADC_init();
+  //JOYSTICK_Init();
+  JOYSTICK_position_t joystick;
   while (1) {
-	  printf("X position: %d\n", ADC_read_X_joystick() );
-	  printf("Y position: %d\n", ADC_read_Y_joystick());
+	  //printf("X position: %d\n", ADC_read_X_joystick() );
+	  joystick = JOYSTICK_get_position_scaled();
+	  printf("Y position: %d\n", joystick.y_position);
+	  printf("DIRECTION: %d\n", (int)JOYSTICK_get_direction());
   }
 }
 

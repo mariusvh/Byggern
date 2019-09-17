@@ -25,7 +25,7 @@ uint8_t ADC_read_X_joystick(void){
 uint8_t ADC_read_Y_joystick(void){
 	uint8_t ch2 = 5;
 	uint8_t y = ADC_read(ch2);
-	return y;
+	return y; // min y=0, max y=255,
 }
 
 uint8_t ADC_read_left_slider(void){
@@ -43,7 +43,6 @@ void ADC_setCS(uint8_t value){
   DDRC = 0x0F;
   PORTC = 0;
   PORTC = (value << PC2);
-
 }
 
 // value needs to be 1-4
