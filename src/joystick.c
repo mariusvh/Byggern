@@ -2,11 +2,12 @@
 #include "adc.h"
 #include <math.h>
 
-static int x_initial_position, y_initial_position;
+static uint8_t x_initial_position, y_initial_position;
 
 void JOYSTICK_Init(void){
-	uint8_t x_initial_position = ADC_read_X_joystick();
-	uint8_t y_initial_position = ADC_read_Y_joystick();
+	x_initial_position = ADC_read_X_joystick();
+	y_initial_position = ADC_read_Y_joystick();
+
 }
 
 
@@ -20,6 +21,7 @@ JOYSTICK_position_t JOYSTICK_get_position_scaled(void){
 	joystick.x_position = (signed char)(x_value-INITIAL_VALUE)/(MAX_JOYSTICK_VALUE-INITIAL_VALUE)*100;
 	joystick.y_position = (signed char)(y_value-INITIAL_VALUE)/(MAX_JOYSTICK_VALUE-INITIAL_VALUE)*100;
 
+
 	return joystick;
 }
 
@@ -32,9 +34,12 @@ JOYSTICK_direction_t JOYSTICK_get_direction(void){
 
 	// returns error if x or y is 0
 	double angle = atan2(joystick.y_position+1, joystick.x_position+1); // the function takes into account the sign of both arguments in order to determine the quadrant.
-	if ((joystick.y_position < offset_value && joystick.y_position >= -offset_value) && (joystick.x_position < offset_value && joystick.x_position >= -offset_value)) {
+
+	if ((joystick.y_position <= offset_value && joystick.y_position >= -offset_value) && (joystick.x_position <= offset_value && joystick.x_position >= -offset_value)) {
 		return NEUTRAL;
 	}
+
+	// limit value is 60 degrees, could change to 45
 
 	if (angle >= PI/3 && angle <= 2*PI/3) {
 		return UP;
@@ -48,8 +53,5 @@ JOYSTICK_direction_t JOYSTICK_get_direction(void){
 	if (angle >= 2*PI/3 && angle <= -2*PI/3) {
 		return LEFT;
 	}
-	else{
-		return NEUTRAL;
-	}
-
+	return NEUTRAL;
 }

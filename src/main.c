@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include "adc.h"
 #include "joystick.h"
+#include "slider.h"
+#include "oled.h"
 
 #define F_CPU 4000000
 #include "util/delay.h"
@@ -16,13 +18,34 @@
 void main() {
   String_Init(MYUBRR);
   ADC_init();
-  //JOYSTICK_Init();
+  JOYSTICK_Init();
   JOYSTICK_position_t joystick;
+  SLIDER_positions_t sliders;
+  uint8_t right_slider;
+  OLED_init_program();
+//  OLED_write_command(0xA5, 0xA5);
+  OLED_write_data();
+
+
+
+
+
+
   while (1) {
-	  //printf("X position: %d\n", ADC_read_X_joystick() );
-	  joystick = JOYSTICK_get_position_scaled();
-	  printf("Y position: %d\n", joystick.y_position);
-	  printf("DIRECTION: %d\n", (int)JOYSTICK_get_direction());
+
+    //printf("X position: %d\n", ADC_read_X_joystick() );
+	  //joystick = JOYSTICK_get_position_scaled();
+	  //printf("Y position: %d\n\r", joystick.y_position);
+	  //printf("DIRECTION: %d\n", (int)JOYSTICK_get_direction());
+
+  //  printf("Slider right_button %d\n\r", SLIDER_right_button());
+
+    /*
+    sliders = SLIDER_get_scaled_position();
+    right_slider = ADC_read_right_slider();
+    printf("RIGHTSLIDER: %d\n", right_slider);
+    */
+
   }
 }
 
