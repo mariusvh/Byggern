@@ -23,8 +23,14 @@ void main() {
   SLIDER_positions_t sliders;
   uint8_t right_slider;
   OLED_init_program();
-//  OLED_write_command(0xA5, 0xA5);
-  OLED_write_data();
+  //OLED_write_command(0xA5);
+  /*
+  OLED_write_command(0x01, 0x01); //page addressing mode
+  OLED_write_command(0xB1, 0xB1); //page0
+  OLED_write_command(0x00, 0x00); //set lower start column address
+  OLED_write_command(0x10,0x10); //set upper start column address
+
+*/
 
 
 

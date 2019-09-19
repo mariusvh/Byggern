@@ -5,9 +5,9 @@
 
 void OLED_init_program();
 
-void OLED_write_command(uint8_t command, uint8_t adress);
+void OLED_write_command(uint8_t command);
 
-void OLED_write_data(uint8_t data, uint8_t adress);
+void OLED_write_data(uint8_t data);
 
 
 #endif
