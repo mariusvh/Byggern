@@ -20,6 +20,6 @@ int SLIDER_right_button(){
 }
 
 int SLIDER_left_button(){
-	DDRB &= 0xFD;
+	DDRB &= 0xFE;
 	return (PINB & (1 << PB0))==1;
 }

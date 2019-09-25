@@ -17,10 +17,10 @@ typedef struct
 typedef enum
 {
 	UP = 0,
-	DOWN,
-	LEFT,
-	RIGHT,
-	NEUTRAL
+	DOWN = 1,
+	LEFT = 2,
+	RIGHT = 3,
+	NEUTRAL = 4
 }JOYSTICK_direction_t;
 
 void JOYSTICK_Init(void);
@@ -29,5 +29,8 @@ void JOYSTICK_Init(void);
 JOYSTICK_position_t JOYSTICK_get_position_scaled(void);
 
 JOYSTICK_direction_t JOYSTICK_get_direction(void);
+
+int JOYSTICK_button();
+
 
 #endif

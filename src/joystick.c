@@ -55,3 +55,8 @@ JOYSTICK_direction_t JOYSTICK_get_direction(void){
 	}
 	return NEUTRAL;
 }
+
+int JOYSTICK_button(){
+	DDRB &= 0xFB;
+	return (PINB & (1 << PB2))==3;
+}

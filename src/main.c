@@ -7,6 +7,7 @@
 #include "joystick.h"
 #include "slider.h"
 #include "oled.h"
+#include "menu.h"
 
 #define F_CPU 4000000
 #include "util/delay.h"
@@ -15,72 +16,29 @@
 #define MYUBRR FOSC/16/BAUD-1
 
 
-void main() {
-  String_Init(MYUBRR);
-  ADC_init();
-  JOYSTICK_Init();
-  JOYSTICK_position_t joystick;
-  SLIDER_positions_t sliders;
-  uint8_t right_slider;
-  OLED_init_program();
-//  OLED_write_command(0xA5, 0xA5);
-  OLED_write_data();
-
-
-
-
-
-
-  while (1) {
-
-    //printf("X position: %d\n", ADC_read_X_joystick() );
-	  //joystick = JOYSTICK_get_position_scaled();
-	  //printf("Y position: %d\n\r", joystick.y_position);
-	  //printf("DIRECTION: %d\n", (int)JOYSTICK_get_direction());
-
-  //  printf("Slider right_button %d\n\r", SLIDER_right_button());
-
-    /*
-    sliders = SLIDER_get_scaled_position();
-    right_slider = ADC_read_right_slider();
-    printf("RIGHTSLIDER: %d\n", right_slider);
-    */
-
-  }
-}
-
-
-/* //Latch test
-  DDRA = (0xFF);
-  DDRE = (0x02);
-  PORTA = 0;
-  PORTE = 0;
-  PORTA = (1 << PA1);
-
-  while (1) {
-
-    _delay_ms(10000);
-    PORTE = (1 << PE1);
-    _delay_ms(10000);
-    PORTE = 0;
-  }
-
-*/
-
-
-  //USART_Init(MYUBRR);
-  //fdevopen(USART_Transmit, USART_Receive);
-
-
+int main() {
 /*
-void SquareWaveTest(){
+  MENU_t main_menu;
+  MENU_t highscores;
+  MENU_t start_new_game;
+  MENU_t show_highscores;
+  MENU_t reset_highscores;
 
-  DDRD = (1 << PD1);
-  PORTD = 0;
+  MENU_arrow_t arrow;
+
+  MENU_creation(&main_menu, &highscores, &show_highscores, &reset_highscores, &start_new_game);
+  MENU_arrow_creation(&arrow);
+  MENU_init();
+*/
+  String_Init(MYUBRR);
+  OLED_init_program();
+  //OLED_clear();
+
+  MENU_init_menus();
+
 
   while(1){
-    PORTD ^= (1 << PD1);
-    _delay_ms(1000);
+
   }
+  return 0;
 }
-*/
