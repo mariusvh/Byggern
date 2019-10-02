@@ -5,6 +5,7 @@
 
 #define MAX_JOYSTICK_VALUE 255
 #define INITIAL_VALUE 127.5
+#define JOYSTICK_CONST 0.78431
 #define PI 3.14159
 
 typedef struct

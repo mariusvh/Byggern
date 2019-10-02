@@ -16,10 +16,10 @@ SLIDER_positions_t SLIDER_get_scaled_position(void){
 
 int SLIDER_right_button(){
 	DDRB &= 0xFD;
-	return (PINB & (1 << PB1))==2;
+	return (PINB & (1 << PB1))==2; //return 0 or 1
 }
 
 int SLIDER_left_button(){
 	DDRB &= 0xFE;
-	return (PINB & (1 << PB0))==1;
+	return (PINB & (1 << PB0))==1; //return 0 or 1
 }

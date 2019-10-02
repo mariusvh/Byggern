@@ -17,7 +17,12 @@
 
 
 int main() {
-/*
+
+  String_Init(MYUBRR);
+  OLED_init_program();
+  int btn_pressed = 0;
+  /*
+
   MENU_t main_menu;
   MENU_t highscores;
   MENU_t start_new_game;
@@ -29,15 +34,22 @@ int main() {
   MENU_creation(&main_menu, &highscores, &show_highscores, &reset_highscores, &start_new_game);
   MENU_arrow_creation(&arrow);
   MENU_init();
-*/
-  String_Init(MYUBRR);
-  OLED_init_program();
+  */
+
   //OLED_clear();
-
+  MENU_arrow_t arrow;
   MENU_init_menus();
-
+  MENU_arrow_creation(&arrow);
 
   while(1){
+    MENU_move_arrow(&arrow);
+    if (btn_pressed == 0 && SLIDER_right_button() || btn_pressed == 0 && SLIDER_left_button()){
+      MENU_select_menu(&arrow);
+      btn_pressed = 1;
+    }
+    if (!SLIDER_right_button() && !SLIDER_left_button()) {
+      btn_pressed = 0;
+    }
 
   }
   return 0;

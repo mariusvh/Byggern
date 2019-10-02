@@ -3,14 +3,15 @@
 #include "oled.h"
 #include "stdio.h"
 #include <stdlib.h>
+#include "slider.h"
 
 volatile MENU_t *current_menu;
 
-MENU_t* MENU_set_new_menu(char* menu_title, MENU_t* parent){
-  MENU_t* new_menu;
-  new_menu->menu_title = menu_title;
+MENU_t* MENU_set_new_menu(char* title, MENU_t* parent, uint8_t child_size){
+  MENU_t* new_menu = malloc(sizeof(MENU_t));
+  new_menu->menu_title = title;
   new_menu->parent = parent;
-  new_menu->child_array = malloc(sizeof(MENU_t*)*2);
+  new_menu->child_array = malloc(sizeof(MENU_t*)*child_size);
   return new_menu;
 }
 
@@ -19,39 +20,32 @@ void MENU_set_child(MENU_t *menu, MENU_t *child, uint8_t index){
 }
 
 
-void MENU_print_menu(MENU_t *menu){
-  uint8_t title_col = 28;
+void MENU_print_menu(volatile MENU_t *menu){
+  printf("TITLE: %s\n\r", menu->menu_title);
   uint8_t title_page = 0;
   uint8_t title_size = 8;
   OLED_clear();
   OLED_set_start_page(title_page);
-  OLED_set_col(title_col);
-
-  if (&menu->menu_title != "MAIN MENU") {
-    printf("ERROR: \n\r");
-  }
-  printf("PRINT: %s\n\r", menu->menu_title);
-
-
+  OLED_set_col(TITLE_COL);
   OLED_print_string(menu->menu_title,title_size);
 
-  uint8_t child_col = 40;
-
+  uint8_t child_col = CHILD_COL;
   for (size_t i = 0; i < sizeof(menu->child_array); i++) {
     OLED_set_start_page(2*i+2);
     OLED_set_col(child_col);
     OLED_print_string(menu->child_array[i]->menu_title, 5);
-    printf("CHILD: %s\n\r",menu->child_array[i]->menu_title );
   }
+  //OLED_print_arrow(ARROW_COL,2);
 }
 
 
-volatile MENU_t *MENU_init_menus(void){
-  MENU_t* main_menu = MENU_set_new_menu("MAIN MENU", NULL);
-  MENU_t* highscores = MENU_set_new_menu("HIGHSCORES", main_menu);
-  MENU_t* new_game = MENU_set_new_menu("START NEW GAME", main_menu);
-  MENU_t* show_highscores = MENU_set_new_menu("SHOW HIGHSCORES", highscores);
-  MENU_t* reset_highscores = MENU_set_new_menu("RESET HIGHSCORES", highscores);
+void MENU_init_menus(void){
+
+  MENU_t *main_menu = MENU_set_new_menu("MAIN MENU", NULL,2);
+  MENU_t *highscores = MENU_set_new_menu("HIGHSCORES", main_menu,2);
+  MENU_t *new_game = MENU_set_new_menu("START NEW GAME", main_menu,2);
+  MENU_t *show_highscores = MENU_set_new_menu("SHOW HIGHSCORES", highscores,2);
+  MENU_t *reset_highscores = MENU_set_new_menu("RESET HIGHSCORES", highscores,2);
 
   MENU_set_child(main_menu, new_game, 0);
   MENU_set_child(main_menu, highscores, 1);
@@ -60,8 +54,7 @@ volatile MENU_t *MENU_init_menus(void){
   //maybe more children to come
 
   current_menu = main_menu;
-  MENU_print_menu(main_menu);
-  return current_menu;
+  MENU_print_menu(current_menu);
 }
 
 void MENU_creation(MENU_t *main_menu, MENU_t *highscores, MENU_t *show_highscores, MENU_t *reset_highscores, MENU_t *start_new_game) {
@@ -70,6 +63,7 @@ void MENU_creation(MENU_t *main_menu, MENU_t *highscores, MENU_t *show_highscore
   main_menu->child_array = malloc(sizeof(MENU_t*)*2);
   main_menu->child_array[0] = highscores;
   main_menu->child_array[1] = start_new_game;
+  printf("%s\n",main_menu->menu_title);
 
   highscores->menu_title = "HIGHSCORES";
   highscores->parent = main_menu;
@@ -92,6 +86,7 @@ void MENU_arrow_creation(MENU_arrow_t *arrow){
   arrow->prev_dir = NEUTRAL;
   arrow->prev_pos.x_position = 0;
   arrow->prev_pos.y_position = 0;
+  OLED_print_arrow(ARROW_COL,2);
 }
 
 void MENU_arrow_get_position(MENU_arrow_t *arrow) {
@@ -100,77 +95,67 @@ void MENU_arrow_get_position(MENU_arrow_t *arrow) {
   arrow->prev_pos.y_position = joystick.y_position;
 }
 
-JOYSTICK_direction_t MENU_get_direction(MENU_arrow_t *arrow){
+JOYSTICK_direction_t MENU_move_arrow(MENU_arrow_t *arrow){
   JOYSTICK_direction_t dir = JOYSTICK_get_direction();
   switch (dir) {
     case DOWN:
       if (arrow->prev_dir == NEUTRAL){
         arrow->prev_dir = DOWN;
-        if (arrow->arrow_page != 0) {
-          MENU_set_arrow(arrow,arrow->arrow_page+1);
-          arrow->arrow_page ++;
+        if (MENU_set_arrow(arrow,arrow->arrow_page+2)) {
+          arrow->arrow_page += 2;
         }
         return DOWN;
       }
     case UP:
       if (arrow->prev_dir == NEUTRAL){
         arrow->prev_dir = UP;
-        if (arrow->arrow_page != 7) {
-          MENU_set_arrow(arrow,arrow->arrow_page-1);
-          arrow->arrow_page --;
+        if (MENU_set_arrow(arrow,arrow->arrow_page-2)) {
+          arrow->arrow_page -= 2;
         }
-        OLED_clear();
         return UP;
       }
     case NEUTRAL:
+      MENU_set_arrow(arrow, arrow->arrow_page);
+      arrow->prev_dir = NEUTRAL;
       return NEUTRAL;
     default:
       return -1;
   }
  }
 
-void MENU_set_arrow(MENU_arrow_t *arrow, uint8_t page){
-  if (page == arrow->arrow_page) {
-    return;
+
+int MENU_set_arrow(MENU_arrow_t *arrow, uint8_t page){
+  if (page <= 0) {
+    return 0;
+  }
+  if (page >= 5) {
+    return 0;
   }
   else{
     OLED_set_start_page(arrow->arrow_page);
-    OLED_set_col(28);
+    OLED_set_col(ARROW_COL);
     OLED_print_string(" ",5);
-    OLED_print_arrow(28,page);
-
-
+    OLED_print_arrow(ARROW_COL,page);
+    return 1;
   }
 }
 
-void MENU_main_menu(void){
-  OLED_clear();
-  OLED_set_start_page(0);
-  OLED_set_col(28);
-  OLED_print_string("MAIN MENU",8);
-  OLED_set_start_page(2);
-  OLED_set_col(40);
-  OLED_print_string("START NEW GAME",5);
-  OLED_set_start_page(4);
-  OLED_set_col(40);
-  OLED_print_string("HIGHSCORES",5);
-}
-
-void MENU_highscores(void){
-  OLED_clear();
-  OLED_set_start_page(0);
-  OLED_set_col(28);
-  OLED_print_string("HIGHSCORES",8);
-  OLED_set_start_page(2);
-  OLED_set_col(40);
-  OLED_print_string("SHOW HIGHSCORES",5);
-  OLED_set_start_page(4);
-  OLED_set_col(40);
-  OLED_print_string("RESET HIGHSCORES",5);
-
-}
-
-void MENU_init(void){
-    MENU_main_menu();
-  OLED_print_arrow(28,2);
+void MENU_select_menu(MENU_arrow_t *arrow){
+  if (!SLIDER_right_button() && !SLIDER_left_button()) {
+    return;
+  }
+  if (SLIDER_right_button()) {
+    for (size_t i = 0; i < sizeof(current_menu->child_array); i++) {
+      if ((arrow->arrow_page/2 - 1) == i) {
+        current_menu = current_menu->child_array[i];
+        MENU_print_menu(current_menu);
+      }
+    }
+  }
+  if (SLIDER_left_button()) {
+    if (current_menu->parent != NULL) {
+      current_menu = current_menu->parent;
+      MENU_print_menu(current_menu);
+    }
+  }
 }

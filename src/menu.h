@@ -4,10 +4,14 @@
 #include <avr/io.h>
 #include "joystick.h"
 
+#define ARROW_COL 20
+#define TITLE_COL 20
+#define CHILD_COL 32
+
 typedef struct MENU_t MENU_t;
 typedef struct MENU_arrow_t MENU_arrow_t;
 
-struct MENU_t
+ struct MENU_t
 {
 	char* menu_title;
 	MENU_t* parent;
@@ -22,13 +26,13 @@ struct MENU_arrow_t
   JOYSTICK_position_t prev_pos;
 };
 
-MENU_t* MENU_set_new_menu(char* menu_title, MENU_t* parent);
+MENU_t* MENU_set_new_menu(char* title, MENU_t* parent, uint8_t child_size);
 
 void MENU_set_child(MENU_t *menu, MENU_t *child, uint8_t index);
 
-void MENU_print_menu(MENU_t *menu);
+void MENU_print_menu(volatile MENU_t *menu);
 
-volatile MENU_t *MENU_init_menus(void);
+void MENU_init_menus(void);
 
 
 
@@ -39,9 +43,11 @@ void MENU_arrow_creation(MENU_arrow_t *arrow);
 
 void MENU_arrow_get_position(MENU_arrow_t *arrow);
 
-JOYSTICK_direction_t MENU_get_direction(MENU_arrow_t *arrow);
+JOYSTICK_direction_t MENU_move_arrow(MENU_arrow_t *arrow);
 
-void MENU_set_arrow(MENU_arrow_t *arrow, uint8_t page);
+int MENU_set_arrow(MENU_arrow_t *arrow, uint8_t page);
+
+void MENU_select_menu(MENU_arrow_t *arrow);
 
 void MENU_main_menu(void);
 
