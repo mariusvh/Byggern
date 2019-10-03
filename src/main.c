@@ -8,6 +8,8 @@
 #include "slider.h"
 #include "oled.h"
 #include "menu.h"
+#include "spi.h"
+#include "mcp_controll.h"
 
 #define F_CPU 4000000
 #include "util/delay.h"
