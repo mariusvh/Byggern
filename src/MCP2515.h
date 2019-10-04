@@ -154,6 +154,11 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define MCP_WAKIF		0x40
 #define MCP_MERRF		0x80
 
-
+//TRANSMISSION registers added by us
+#define MCP_TXB0SIDH  0x31
+#define MCP_TXB0SIDL  0x32
+#define MCP_TXB0DLC	  0x35
+#define MCP_TXB0D0    0x36
+#define MCP_TXRTSCTRL 0x0D
 
 #endif

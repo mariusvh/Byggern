@@ -3,6 +3,8 @@
 
 #include <avr/io.h>
 
+void MCP_init();
+
 void MCP_CONTROLL_setCS(uint8_t value);
 
 uint8_t MCP_CONTROLL_read(uint8_t adress);

@@ -10,6 +10,8 @@
 #include "menu.h"
 #include "spi.h"
 #include "mcp_controll.h"
+#include "can.h"
+#include "MCP2515.h"
 
 #define F_CPU 4000000
 #include "util/delay.h"
@@ -42,8 +44,13 @@ int main() {
   MENU_arrow_t arrow;
   MENU_init_menus();
   MENU_arrow_creation(&arrow);
+  CAN_init();
+  //MCP_controll_write(170,MCP_TXB0CTRL);
+  //uint8_t data = MCP_CONTROLL_read(MCP_CANSTAT);
+  //printf("DATA: %d\n", data);
 
   while(1){
+  //  MCP_controll_write(170,MCP_TXB0CTRL);
     MENU_move_arrow(&arrow);
     if (btn_pressed == 0 && SLIDER_right_button() || btn_pressed == 0 && SLIDER_left_button()){
       MENU_select_menu(&arrow);

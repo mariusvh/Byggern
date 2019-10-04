@@ -1,19 +1,39 @@
 #include "mcp_controll.h"
 #include "spi.h"
 #include "MCP2515.h"
+#include "util/delay.h"
 
 
 void MCP_init(){
+    uint8_t val;
     SPI_master_init();
+
     MCP_reset();
+
+    val = MCP_CONTROLL_read(MCP_CANSTAT);
+    uint8_t mode_bits = (val & MODE_MASK);
+    if (mode_bits != MODE_CONFIG) {
+      printf("MCP2515 is NOT in Configuration mode after reset! Config bits are: %x\n\r", mode_bits);
+    }
+
     MCP_controll_write(MODE_NORMAL,MCP_CANCTRL);
+    //_delay_ms(100);
+    uint8_t read = MCP_CONTROLL_read(MCP_CANCTRL);
+    printf("can control register:  %x \n\r", read);
+
 }
 
 void MCP_CONTROLL_setCS(uint8_t value){
     /*Set slave select to output*/
-    DDRB = (1<<DDB4);
-    /*Set SS*/
-    PORTB = (value << PB4);
+    //DDRB |= (1<<PB4);
+    switch(value){
+    case 0:
+      PORTB &= ~(1 << PB4);
+      break;
+    case 1:
+      PORTB |= (1 << PB4);
+      break;
+    }
 }
 
 uint8_t MCP_CONTROLL_read(uint8_t adress){
@@ -24,7 +44,7 @@ uint8_t MCP_CONTROLL_read(uint8_t adress){
     /*Sending the adress to be read from*/
     SPI_master_transmit(adress);
     /*receive data from the selected adress*/
-    char data = SPI_slave_receive();
+    uint8_t data = SPI_slave_receive();
     /*Set CS to high*/
     MCP_CONTROLL_setCS(1);
     return data;
@@ -58,7 +78,7 @@ void MCP_request_to_send(uint8_t buffer){
             SPI_master_transmit(MCP_RTS_TX2);
             break;
         case 3:
-            SPI_master_transmit(MCP_RTS_TXALL);
+            SPI_master_transmit(MCP_RTS_ALL);
             break;
         default:
             break;
@@ -103,6 +123,7 @@ void MCP_reset(){
     SPI_master_transmit(MCP_RESET);
     /*Set CS to high*/
     MCP_CONTROLL_setCS(1);
+    _delay_ms(10);
 }
 
 /*
