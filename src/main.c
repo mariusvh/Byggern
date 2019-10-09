@@ -49,6 +49,43 @@ int main() {
   //uint8_t data = MCP_CONTROLL_read(MCP_CANSTAT);
   //printf("DATA: %d\n", data);
 
+  CAN_init();
+  CAN_MESSAGE_t m1;
+  m1.id = 2;
+  m1.data[0] = 'H';
+  m1.data[1] = 'E';
+  m1.data[2] = 'I';
+  m1.data[3] = '*';
+  m1.length = 4;
+
+  CAN_MESSAGE_t m2;
+  m2.id = 3;
+  m2.data[0] = 'D';
+  m2.data[1] = 'E';
+  m2.data[2] = 'R';
+
+  m2.length = 3;
+
+  CAN_MESSAGE_t m3;
+
+
+
+  CAN_send_message(&m1);
+  //CAN_send_message(&m2);
+
+  CAN_receive_message(0, &m3);
+
+  printf("Data: %s\n\r", m3.data);
+
+/*
+  CAN_receive_message(0, &m3);
+
+  printf("Data: %s\n\r", m3.data);
+*/
+    //MCP_controll_write(170,MCP_TXB0CTRL);
+  //uint8_t data = MCP_CONTROLL_read(MCP_CANSTAT);
+  //printf("DATA: %d\n", data);
+
   while(1){
   //  MCP_controll_write(170,MCP_TXB0CTRL);
     MENU_move_arrow(&arrow);
