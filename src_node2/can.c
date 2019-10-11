@@ -4,31 +4,30 @@
 #include "can.h"
 #include <stdio.h>
 
-void CAN_init(){
+void CAN_init(uint8_t mode){
   MCP_init();
-//  MCP_controll_write( ,MCP_TXRTSCTRL);
-  MCP_controll_write(MODE_LOOPBACK, MCP_CANCTRL);
-
-
-
-
+  MCP_controll_write(mode, MCP_CANCTRL);
   uint8_t read = MCP_CONTROLL_read(MCP_CANCTRL);
   printf("can control register:  %x \n\r", read);
 }
 
+CAN_MESSAGE_t CAN_construct_message(char *string, uint8_t id, uint8_t length){
+  CAN_MESSAGE_t message;
+  message.id = id;
+  message.length = length;
+  for (size_t i = 0; i < length; i++) {
+    message.data[i] = string[i];
+  }
+  return message;
+}
+
 void CAN_send_message(CAN_MESSAGE_t *message){
-
-
-  /*message.id needs to be divided into SIDH and SIDL*/
   static int buffer_number = 0;
   buffer_number +=1;
   if (buffer_number > 2){
 
     buffer_number = 0;
   }
-
-
-
   uint8_t SIDH_divider = 8;
   uint8_t SIDL_multiplier = 32;
   unsigned int id_high = message->id/SIDH_divider;
