@@ -9,6 +9,4 @@ void SPI_master_transmit(uint8_t data);
 
 uint8_t SPI_slave_receive(void);
 
-void SPI_set_SS(uint8_t value);
-
 #endif

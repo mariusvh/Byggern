@@ -1,5 +1,6 @@
 #include "mcp_controll.h"
 #include "spi.h"
+#include <stdio.h>
 #include "MCP2515.h"
 #include "util/delay.h"
 
@@ -28,7 +29,7 @@ void MCP_CONTROLL_setCS(uint8_t value){
 }
 
 uint8_t MCP_CONTROLL_read(uint8_t adress){
-    /*Set CS to low*/
+    /*Set to low*/
     MCP_CONTROLL_setCS(0);
     /*Sending the READ instruction to the MCP2515*/
     SPI_master_transmit(MCP_READ);

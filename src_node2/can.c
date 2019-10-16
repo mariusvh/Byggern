@@ -4,6 +4,13 @@
 #include "can.h"
 #include <stdio.h>
 
+#ifndef F_CPU
+#define F_CPU 16000000UL //Clock speed
+#endif
+#include "avr/io.h"
+
+
+
 void CAN_init(uint8_t mode){
   MCP_init();
   MCP_controll_write(mode, MCP_CANCTRL);
