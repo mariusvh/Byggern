@@ -26,42 +26,21 @@ int main() {
   OLED_init_program();
   int btn_pressed = 0;
 
-  
-  //OLED_clear();
   MENU_arrow_t arrow;
   MENU_init_menus();
   MENU_arrow_creation(&arrow);
-  CAN_init();
 
+  CAN_init(MODE_NORMAL);
 
-  CAN_init();
-  CAN_MESSAGE_t m1;
-  m1.id = 2;
-  m1.data[0] = 'H';
-  m1.data[1] = 'E';
-  m1.data[2] = 'I';
-  m1.data[3] = 'L';
-  m1.length = 4;
+  CAN_MESSAGE_t m_sent = CAN_construct_message("node1", 1, 5);
 
-  CAN_MESSAGE_t m2;
-  m2.id = 3;
-  m2.data[0] = 'D';
-  m2.data[1] = 'E';
-  m2.data[2] = 'R';
+  CAN_MESSAGE_t m_rec;
 
-  m2.length = 3;
+  CAN_send_message(&m_sent);
 
-  CAN_MESSAGE_t m3;
+  CAN_receive_message(0, &m_rec);
 
-
-
-  CAN_send_message(&m1);
-  //CAN_send_message(&m2);
-
-  CAN_receive_message(0, &m3);
-
-  printf("Data: %s\n\r", m3.data);
-
+  printf("Data: %s\n\r", m_rec.data);
 /*
   CAN_receive_message(0, &m3);
 
