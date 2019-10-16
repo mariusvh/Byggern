@@ -2,7 +2,6 @@
 
 void SPI_master_init(void){
   /* Set SS, MOSI and SCK output, all others input */
-//  DDRB |= (1<<DDB0|1<<DDB1)|(1<<DDB2)|(DDB7);
   DDRB |= (1<<PB0)|(1<<PB1)|(1<<PB2)|(1<<PB7);
 
   /* Enable SPI, Master, set clock rate fck/16 */
