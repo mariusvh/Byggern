@@ -3,6 +3,7 @@
 #include "MCP2515.h"
 #include "can.h"
 #include <stdio.h>
+#include "joystick.h"
 
 void CAN_init(uint8_t mode){
   MCP_init();
@@ -96,3 +97,22 @@ void CAN_receive_message(int buffer_number, CAN_MESSAGE_t *message){
     MCP_controll_write(message->data[i], MCP_TXB0D0 + i);
   }
 }
+
+/*
+
+void CAN_send_joystick_position(){
+  JOYSTICK_position_t joystick = JOYSTICK_get_position_scaled();
+
+  static uint8_t id = 0;
+
+  CAN_MESSAGE_t message;
+  message.id = id;
+  message.data[0] = joystick.x_position;
+  message.data[1] = joystick.y_position;
+  printf("X.joystick: %d\n\r",message.data[0]);
+  printf("Y.joystick: %d\n\r",message.data[1]);
+  message.length = 2;
+  CAN_send_message(&message);
+  id = id + 1;
+}
+*/

@@ -15,12 +15,6 @@ void MCP_init(){
     if (mode_bits != MODE_CONFIG) {
       printf("MCP2515 is NOT in Configuration mode after reset! Config bits are: %x\n\r", mode_bits);
     }
-
-    MCP_controll_write(MODE_NORMAL,MCP_CANCTRL);
-    //_delay_ms(100);
-    uint8_t read = MCP_CONTROLL_read(MCP_CANCTRL);
-    printf("can control register:  %x \n\r", read);
-
 }
 
 void MCP_CONTROLL_setCS(uint8_t value){
