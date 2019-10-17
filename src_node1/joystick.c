@@ -15,18 +15,19 @@ void JOYSTICK_Init(void){
 
 
 JOYSTICK_position_t JOYSTICK_get_position_scaled(void){
+	ADC_init();
 	JOYSTICK_position_t joystick;
 
 	uint8_t x_value = ADC_read_X_joystick();
 	uint8_t y_value = ADC_read_Y_joystick();
-	//printf("%d\n\r",x_value );
-	//printf("%d\n\r",y_value );
+	//printf("X_ADC: %d\n\r",x_value );
+	//printf("Y_ADC: %d\n\r",y_value );
 
 	// scales between 99 and -99 for some reason, not 100 and -100
-	//joystick.x_position = (signed char)(x_value-INITIAL_VALUE)/(MAX_JOYSTICK_VALUE-INITIAL_VALUE)*100;
-	//joystick.y_position = (signed char)(y_value-INITIAL_VALUE)/(MAX_JOYSTICK_VALUE-INITIAL_VALUE)*100;
-	joystick.x_position = (int)(x_value*JOYSTICK_CONST-100);
-	joystick.y_position = (int)(y_value*JOYSTICK_CONST-100);
+	joystick.x_position = (signed char)(x_value-INITIAL_VALUE)/(MAX_JOYSTICK_VALUE-INITIAL_VALUE)*100;
+	joystick.y_position = (signed char)(y_value-INITIAL_VALUE)/(MAX_JOYSTICK_VALUE-INITIAL_VALUE)*100;
+	//joystick.x_position = (int)(x_value*JOYSTICK_CONST-100);
+	//joystick.y_position = (int)(y_value*JOYSTICK_CONST-100);
 
 	return joystick;
 }

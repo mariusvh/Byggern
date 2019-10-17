@@ -38,7 +38,7 @@ void CAN_send_message(CAN_MESSAGE_t *message){
 
   id_low = id_low*SIDL_multiplier;
 
-  MCP_controll_write(id_high,MCP_TXB0SIDH + 16*buffer_number); //not sure about 0
+  MCP_controll_write(id_high,MCP_TXB0SIDH + 16*buffer_number); 
   MCP_controll_write(id_low, MCP_TXB0SIDL + 16*buffer_number);
 
 
@@ -98,21 +98,17 @@ void CAN_receive_message(int buffer_number, CAN_MESSAGE_t *message){
   }
 }
 
-/*
 
-void CAN_send_joystick_position(){
+
+void CAN_send_joystick_position(CAN_MESSAGE_t *message){
   JOYSTICK_position_t joystick = JOYSTICK_get_position_scaled();
-
-  static uint8_t id = 0;
-
-  CAN_MESSAGE_t message;
-  message.id = id;
-  message.data[0] = joystick.x_position;
-  message.data[1] = joystick.y_position;
-  printf("X.joystick: %d\n\r",message.data[0]);
-  printf("Y.joystick: %d\n\r",message.data[1]);
-  message.length = 2;
-  CAN_send_message(&message);
-  id = id + 1;
+  uint8_t id = 0;
+  message->id = id;
+  message->data[0] = joystick.x_position;
+  message->data[1] = joystick.y_position;
+  printf("X.joystick: %d\n\r",message->data[0]);
+  printf("Y.joystick: %d\n\r",message->data[1]);
+  message->length = 2;
+  CAN_send_message(message);
 }
-*/
+

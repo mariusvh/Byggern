@@ -13,7 +13,7 @@
 #include "can.h"
 #include "MCP2515.h"
 
-#define F_CPU 4000000
+#define F_CPU 4915200
 #include <util/delay.h>
 #define FOSC 4915200 //Clock speed
 #define BAUD 9600
@@ -35,39 +35,11 @@ int main() {
 
   CAN_message_ptr m_rec;
   CAN_message_ptr message;
-  JOYSTICK_position_t joystick;
-  uint8_t id = 0;
 
   while(1){
-
-    joystick = JOYSTICK_get_position_scaled();
-      
-    message->id = id;
-    message->data[0] = joystick.x_position;
-    message->data[1] = joystick.y_position;
-    printf("X.joystick: %d\n\r",message->data[0]);
-    printf("Y.joystick: %d\n\r",message->data[1]);
-    message->length = 2;
-    CAN_send_message(message);
-    _delay_ms(30);
-    id = id + 1;
-    //CAN_receive_message(0,m_rec);
-    //printf("Data: %s\n\r", m_rec.data);
-
-    //CAN_send_joystick_position();
-    //CAN_send_message(&m_send);
-    //CAN_receive_message(0,&m_rec);
-    //CAN_receive_message(0,&m_rec);
-    //printf("X: %d\n\r",m_rec->data[0]);
-    //printf("Y: %d\n\r",m_rec->data[1]);
-    //_delay_ms(500);
+    CAN_send_joystick_position(message);
+    _delay_ms(500);
    
-    /*
-    CAN_send_message(&m_send);
-    CAN_receive_message(0,&m_rec);
-    printf("Data: %s\n\r", m_rec.data);
-    */
-
     MENU_move_arrow(&arrow);
     if (btn_pressed == 0 && SLIDER_right_button() || btn_pressed == 0 && SLIDER_left_button()){
       MENU_select_menu(&arrow);

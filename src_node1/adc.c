@@ -1,6 +1,6 @@
 #include "adc.h"
 
-#define F_CPU 4000000
+#define F_CPU 4915200
 #include "util/delay.h"
 
 void ADC_init(void) {
