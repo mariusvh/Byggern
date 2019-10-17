@@ -101,4 +101,17 @@ void CAN_receive_message(int buffer_number, CAN_MESSAGE_t *message){
   for (uint8_t i = 0; i < message->length; i++) {
     MCP_controll_write(message->data[i], MCP_TXB0D0 + i);
   }
+
+  /*Taking care of interrupts ish */
+  uint8_t read = MCP_CONTROLL_read(MCP_CANINTF);
+  if(read & (1<<0)) //RX0 int
+    {
+      read &= ~(1<<0);
+    }
+    
+  if(read & (1<<5)) //ERRIF
+    {
+       read &= ~(1<<5);
+    }
+  MCP_controll_write(read, MCP_CANINTF);
 }
