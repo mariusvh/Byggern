@@ -5,7 +5,7 @@
 #include "can.h"
 #include "mcp_controll.h"
 #include "MCP2515.h"
-
+#include "servo.h"
 
 #define F_CPU 16000000UL //Clock speed
 #define FOSC 16000000 //Clock speed
@@ -16,15 +16,21 @@
 int main() {
   String_Init(MYUBRR);
   CAN_init(MODE_NORMAL);
+  SERVO_init();
 
   //CAN_MESSAGE_t m_send = CAN_construct_message("Node2",2,5);
-  CAN_MESSAGE_t *m_rec;
+  //CAN_MESSAGE_t *m_rec;
 
   while (1)
   {
+    /*
     CAN_receive_message(0,m_rec);
     printf("X: %d\n\r",m_rec->data[0]);
     printf("Y: %d\n\r",m_rec->data[1]);
+    */
+
+   SERVO_set_duty_cycle(0.0009);
+   _delay_ms(500);
   }
   
   return 0;
