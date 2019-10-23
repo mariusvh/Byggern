@@ -38,7 +38,8 @@ int main() {
 
   while(1){
     CAN_send_joystick_position(message);
-    _delay_ms(500);
+    //_delay_ms(500);
+
    
     MENU_move_arrow(&arrow);
     if (btn_pressed == 0 && SLIDER_right_button() || btn_pressed == 0 && SLIDER_left_button()){
