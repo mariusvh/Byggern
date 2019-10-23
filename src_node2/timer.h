@@ -9,6 +9,6 @@
 
 void TIMER_init_fast_pwm(uint8_t pwm_frec);
 
-void TIMER_set_duty_cycle(float duty_cycle);
+void TIMER_set_duty_cycle(uint8_t duty_cycle_us);
 
 #endif

@@ -1,4 +1,7 @@
 #include "timer.h"
+#include <stdio.h>
+#define DUTY_MIN 61.5
+#define DUTY_MAX 124
 
 
 void TIMER_init_fast_pwm(uint8_t pwm_frec){
@@ -23,7 +26,7 @@ void TIMER_init_fast_pwm(uint8_t pwm_frec){
     TCCR1A |= (1<<COM1A1);
     TCCR1A &= ~(1<<COM1A0);
 
-    /*set TOP, maybe period related*/
+    /*set TOP, period related*/
     int TOP = (FOSC)/(prescaler_divider*pwm_frec) - 1;
     ICR1 = TOP; //1249
 
@@ -31,22 +34,34 @@ void TIMER_init_fast_pwm(uint8_t pwm_frec){
     OCR1A = (DUTY_MAX+DUTY_MIN)/2;
 }
 
-void TIMER_set_duty_cycle(float duty_cycle){
+void TIMER_set_duty_cycle(uint8_t duty_cycle_us){ 
+    /*
     int prescaler = 256;
-    float duty_cycle_min = prescaler*(1+DUTY_MIN)/(FOSC);
-    float duty_cycle_max = prescaler*(1+DUTY_MAX)/(FOSC);
-    int duty_convert = FOSC*duty_cycle/prescaler - 1;
-
-    if (duty_cycle >= duty_cycle_min && duty_cycle <= duty_cycle_max)
-    {
-        OCR1A = duty_convert;
-    }
-    else if(duty_cycle < duty_cycle_min)
+    uint8_t duty_cycle_min = 100000*prescaler*(1+DUTY_MIN)/(FOSC);
+    printf("Duty_min: %d\n\r", duty_cycle_min);
+    uint8_t duty_cycle_max = 100000*prescaler*(1+DUTY_MAX)/(FOSC);
+    printf("Duty_max: %d\n\r",duty_cycle_max);
+    uint8_t duty_cycle = duty_cycle_us;
+    uint8_t duty_convert = FOSC*duty_cycle/(100000*prescaler) - 1;
+    printf("Duty_conv: %d\n\r",duty_convert);
+*/
+    uint8_t duty_cycle_min = 100;
+    uint8_t duty_cycle_max = 200;
+    uint8_t duty_scaled = DUTY_MIN + (duty_cycle_us-duty_cycle_min)*(DUTY_MAX-DUTY_MIN)/(duty_cycle_max-duty_cycle_min);
+    printf("Duty_scaled: %d\n\r",duty_scaled);
+    
+    if(duty_scaled < DUTY_MIN)
     {
         OCR1A = DUTY_MIN;
+        return;
     }
-    else if(duty_cycle > duty_cycle_max)
+
+    if(duty_scaled > DUTY_MAX)
     {
         OCR1A = DUTY_MAX;
+        return;
     }
+
+    OCR1A = duty_scaled;
 }
+
