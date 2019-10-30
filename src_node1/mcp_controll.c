@@ -1,7 +1,10 @@
 #include "mcp_controll.h"
 #include "spi.h"
 #include "MCP2515.h"
+
+#define F_CPU 4915200
 #include "util/delay.h"
+#include <stdio.h>
 
 
 void MCP_init(){
