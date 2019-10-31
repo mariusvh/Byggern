@@ -1,9 +1,12 @@
 #include "ir.h"
 #include "adc.h"
+#include <stdio.h>
 uint8_t total_bins = 4;
 uint16_t bins[4];
-uint8_t bin_index = 0;
-uint16_t sum = 0;
+volatile uint8_t bin_index = 0;
+volatile uint16_t sum = 0;
+volatile uint8_t score = 0;
+volatile uint8_t flag = 1;
 
 void IR_init(){
 
@@ -16,7 +19,7 @@ void IR_init(){
     /*Initialize first read*/
     bins[bin_index] = ADC_read();
     sum = bins[bin_index];
-
+    printf("SUM: %x\n\r", sum);
 }
 
 uint16_t IR_digital_filter(){
@@ -37,17 +40,37 @@ uint16_t IR_digital_filter(){
     }
 
     uint16_t average = sum/total_bins;
+
+    printf("Average: %x\n\r", average);
     
     return average;
 }
 
 uint16_t IR_count_scores(){
-    /*10bits -> 1024 -> 5V, thus 2V (2.6V w/offset) -> 400 */
-    uint16_t IR_threshold = 400;
-    uint8_t score = 0;
-    if (IR_digital_filter() <= IR_threshold)
-    {
+    /*score threshold at 100*/
+    uint16_t score_threshold = 100;
+    uint16_t no_score_threshold = 254;
+    if (IR_digital_filter() <= score_threshold && flag == 0)
+    {   
         score = score + 1;
+        flag = 1;
     }
+    if (IR_digital_filter() >= no_score_threshold && flag == 1)
+    {
+        flag = 0;
+    }
+    
     return score;    
+}
+
+uint8_t IR_game_over(){
+    uint8_t score_limit = 20;
+    if (IR_count_scores() >= score_limit)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }

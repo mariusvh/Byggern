@@ -9,4 +9,6 @@ uint16_t IR_digital_filter();
 
 uint16_t IR_count_scores();
 
+uint8_t IR_game_over();
+
 #endif
