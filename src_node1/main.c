@@ -35,12 +35,10 @@ int main() {
 
   CAN_message_ptr m_rec;
   CAN_message_ptr message;
-
   while(1){
     CAN_send_joystick_position(message);
     //_delay_ms(500);
 
-   
     MENU_move_arrow(&arrow);
     if (btn_pressed == 0 && SLIDER_right_button() || btn_pressed == 0 && SLIDER_left_button()){
       MENU_select_menu(&arrow);
