@@ -8,15 +8,15 @@
 #define F_CPU 16000000UL //Clock speed
 #endif
 #include "avr/io.h"
+#include <avr/interrupt.h>
 
-
-
+static CAN_MESSAGE_t latest_message;
 
 void CAN_init(uint8_t mode){
   MCP_init();
   MCP_controll_write(mode, MCP_CANCTRL);
   uint8_t read = MCP_CONTROLL_read(MCP_CANCTRL);
-  printf("can control register:  %x \n\r", read);
+  //printf("can control register:  %x \n\r", read);
 }
 
 CAN_MESSAGE_t CAN_construct_message(char *string, uint8_t id, uint8_t length){
@@ -107,11 +107,23 @@ void CAN_receive_message(int buffer_number, CAN_MESSAGE_t *message){
   if(read & (1<<0)) //RX0 int
     {
       read &= ~(1<<0);
+      printf("RX0 \n\r");
     }
     
   if(read & (1<<5)) //ERRIF
     {
        read &= ~(1<<5);
+       printf("ERRIf \n\r");
     }
   MCP_controll_write(read, MCP_CANINTF);
 }
+
+/*
+
+ISR(INT0_vect){
+  cli();
+  latest_message = CAN_receive_message();
+  sei();
+}
+
+*/

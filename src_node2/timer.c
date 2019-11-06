@@ -48,7 +48,7 @@ void TIMER_set_duty_cycle(uint8_t duty_cycle_us){
     uint8_t duty_cycle_min = 100;
     uint8_t duty_cycle_max = 200;
     uint8_t duty_scaled = DUTY_MIN + (duty_cycle_us-duty_cycle_min)*(DUTY_MAX-DUTY_MIN)/(duty_cycle_max-duty_cycle_min);
-    printf("Duty_scaled: %d\n\r",duty_scaled);
+    //printf("Duty_scaled: %d\n\r",duty_scaled);
     
     if(duty_scaled < DUTY_MIN)
     {
