@@ -31,12 +31,14 @@ int main() {
 
   CAN_init(MODE_NORMAL);
 
-  //CAN_MESSAGE_t m_send = CAN_construct_message("node1",1,5);
-
-  CAN_message_ptr m_rec;
-  CAN_message_ptr message;
+  CAN_MESSAGE_t *message;
+  signed char prev_joystick_positions[2];
+  //uint8_t prev_slider_position;
   while(1){
-    CAN_send_joystick_position(message);
+    //CAN_send_controllers(message);
+    CAN_send_joystick_position(message, &prev_joystick_positions);
+
+    //CAN_send_slider_position(message_slider, &prev_slider_position);
     //_delay_ms(500);
 
     MENU_move_arrow(&arrow);

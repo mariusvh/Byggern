@@ -1,8 +1,11 @@
 #include "mcp_controll.h"
 #include "spi.h"
 #include "MCP2515.h"
+#include "adc.h"
 #include "can.h"
 #include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include "joystick.h"
 
 void CAN_init(uint8_t mode){
@@ -38,7 +41,7 @@ void CAN_send_message(CAN_MESSAGE_t *message){
 
   id_low = id_low*SIDL_multiplier;
 
-  MCP_controll_write(id_high,MCP_TXB0SIDH + 16*buffer_number); 
+  MCP_controll_write(id_high,MCP_TXB0SIDH + 16*buffer_number);
   MCP_controll_write(id_low, MCP_TXB0SIDL + 16*buffer_number);
 
 
@@ -100,7 +103,7 @@ void CAN_receive_message(int buffer_number, CAN_MESSAGE_t *message){
 
 
 
-void CAN_send_joystick_position(CAN_MESSAGE_t *message){
+void CAN_send_joystick_position(CAN_MESSAGE_t *message, signed char prev_joystick_positions[]){
   JOYSTICK_position_t joystick = JOYSTICK_get_position_scaled();
   uint8_t id = 0;
   message->id = id;
@@ -109,6 +112,62 @@ void CAN_send_joystick_position(CAN_MESSAGE_t *message){
   printf("X.joystick: %d\n\r",message->data[0]);
   printf("Y.joystick: %d\n\r",message->data[1]);
   message->length = 2;
+  /*Filter, we only send joystick position when new postion is set*/
+  uint8_t filter_threshold = 5;
+  if ((abs(message->data[0])-abs(prev_joystick_positions[0]) > filter_threshold) || (abs(message->data[1])-abs(prev_joystick_positions[1]) > filter_threshold)) {
+    CAN_send_message(message);
+  }
+  /*Update prev_joystick_positions*/
+  for (size_t i = 0; i < message->length; i++) {
+    prev_joystick_positions[i] = message->data[i];
+  }
+
+}
+
+void CAN_send_controllers(CAN_MESSAGE_t *message){
+  uint8_t right_slider = ADC_read_right_slider();
+  uint8_t left_slider = ADC_read_left_slider();
+  JOYSTICK_position_t joystick = JOYSTICK_get_position_scaled();
+
+  uint8_t id = 0;
+  message->id = id;
+  message->data[0] = joystick.x_position;
+  message->data[1] = joystick.y_position;
+  message->data[2] = right_slider;
+  message->data[3] = left_slider;
+  message->length = 4;
   CAN_send_message(message);
 }
 
+void CAN_send_controllers_filter(CAN_MESSAGE_t *message, uint8_t prev_slider_position, signed char prev_joystick_positions[]){
+  uint8_t right_slider = ADC_read_right_slider();
+  uint8_t left_slider = ADC_read_left_slider();
+  JOYSTICK_position_t joystick = JOYSTICK_get_position_scaled();
+
+  uint8_t id = 0;
+  message->id = id;
+  message->data[0] = joystick.x_position;
+  message->data[1] = joystick.y_position;
+  message->data[2] = right_slider;
+  message->data[3] = left_slider;
+  message->length = 4;
+  CAN_send_message(message);
+
+  /*Filter, we only send slider position when new postion is set*/
+  uint8_t filter_threshold = 5;
+  if ((message->data[2]-prev_slider_position) > filter_threshold) {
+    CAN_send_message(message);
+  }
+  if ((abs(message->data[0])-abs(prev_joystick_positions[0]) > filter_threshold) || (abs(message->data[1])-abs(prev_joystick_positions[1]) > filter_threshold)) {
+    CAN_send_message(message);
+  }
+
+  /*Update prev_joystick_positions*/
+  for (size_t i = 0; i < message->length; i++) {
+    prev_joystick_positions[i] = message->data[i];
+  }
+
+  /*Update prev_slider_positions*/
+  prev_slider_position = (uint8_t)message->data[3];
+
+}
