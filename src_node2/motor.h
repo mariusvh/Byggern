@@ -3,8 +3,8 @@
 
 #include <avr/io.h>
 
-#define MAX_JOYSTICK_VALUE 255
-#define INITIAL_VALUE 127.5
+#define MAX_JOYSTICK_VALUE 64
+#define INITIAL_VALUE 32
 
 void MOTOR_init();
 

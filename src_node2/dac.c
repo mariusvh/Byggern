@@ -7,7 +7,7 @@
 
 
 void DAC_init(){
-   // sei();
+    //sei();
     TWI_Master_Initialise();
 }
 
@@ -21,6 +21,6 @@ void DAC_write(unsigned char data){
     unsigned char msg[msg_size];
     msg[0] = adress;
     msg[1] = command;
-    msg[2] = data; 
+    msg[2] = data;
     TWI_Start_Transceiver_With_Data(msg,msg_size);
 }

@@ -35,7 +35,7 @@ uint16_t MOTOR_read_encoder(){
 
     /*Read MSB*/
     uint8_t ms_byte = PINK;
-    printf("ms: %d\n\r", ms_byte);  
+    //printf("ms: %d\n\r", ms_byte);
 
     /*Set SEL high to get low byte*/
     PORTH |= (1<<PH3);
@@ -43,20 +43,21 @@ uint16_t MOTOR_read_encoder(){
     _delay_us(300);
     /*read LSB*/
     uint8_t ls_byte = PINK;
-    printf("ls: %d\n\r", ls_byte);
+    //printf("ls: %d\n\r", ls_byte);
 
 
-    /*Toggle !RST to reset encoder*/
+    /*Toggle !RST to reset encoder
     PORTH &= ~(1<<PH6);
     _delay_us(300);
     PORTH |= (1<<PH6);
+    */
 
     /*Set !OE high to disable output of encoder*/
     PORTH |= (1<<PH5);
 
     /*Process received data*/
     int16_t encoder = ((((int16_t)ms_byte) << 8) | (int16_t)ls_byte);
-
+    printf("Encoder: %d\n\r", encoder);
     return encoder;
 }
 
@@ -70,7 +71,6 @@ void MOTOR_set_direction(uint8_t direction){
 
     if (direction){
         PORTH |= (1<<PH1);
-        printf("1");
     }
 
     else
@@ -78,10 +78,21 @@ void MOTOR_set_direction(uint8_t direction){
         PORTH &= ~(1<<PH1);
     }
 }
-    
+
 
 void MOTOR_joystic_set_speed(signed char joy_y){
+    //printf("joy_y; %d\n\r", joy_y);
+    //unsigned char joy_y_raw = (unsigned char)joy_y*(MAX_JOYSTICK_VALUE-INITIAL_VALUE)/100 + INITIAL_VALUE;
+    //unsigned char joy_y_raw = (unsigned char)joy_y*(MAX_JOYSTICK_VALUE-INITIAL_VALUE)/100 + INITIAL_VALUE;
+    //printf("joy_y_raw; %d\n\r", joy_y_raw);
+    uint8_t threshold = 15;
+    if (joy_y < -threshold) {
+        MOTOR_set_direction(0);
+        MOTOR_set_speed(-joy_y);
+    }
+    else if(joy_y > threshold){
+        MOTOR_set_direction(1);
+        MOTOR_set_speed(joy_y);
+    }
 
-    unsigned char joy_y_raw = (unsigned char)joy_y*(MAX_JOYSTICK_VALUE-INITIAL_VALUE)/100 + INITIAL_VALUE;
-    printf("joy_y; %d\n\r", joy_y_raw);
-}
+} 

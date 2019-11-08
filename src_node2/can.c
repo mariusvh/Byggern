@@ -10,13 +10,24 @@
 #include "avr/io.h"
 #include <avr/interrupt.h>
 
-static CAN_MESSAGE_t latest_message;
-
 void CAN_init(uint8_t mode){
   MCP_init();
   MCP_controll_write(mode, MCP_CANCTRL);
   uint8_t read = MCP_CONTROLL_read(MCP_CANCTRL);
   //printf("can control register:  %x \n\r", read);
+  MCP_bit_modify(MCP_CANINTE,0b00000011,0b11);
+  MCP_bit_modify(MCP_CANINTF,0b00000011,0b00);
+  /*Interrupts*/
+
+  /*Set interrupt to falling edge on PD2. The falling edge of INT2 generates asynchronously an interrupt request*/
+  EICRA |= (1<<ISC01);
+
+  /*Enable interupts on PD2*/
+  EIMSK |= (1<<INT2);
+
+  /*Clear interrupt flag on PD2*/
+  EIFR |= (1<<INT2);
+
 }
 
 CAN_MESSAGE_t CAN_construct_message(char *string, uint8_t id, uint8_t length){
@@ -103,27 +114,18 @@ void CAN_receive_message(int buffer_number, CAN_MESSAGE_t *message){
   }
 
   /*Taking care of interrupts ish */
+  /*
   uint8_t read = MCP_CONTROLL_read(MCP_CANINTF);
   if(read & (1<<0)) //RX0 int
     {
       read &= ~(1<<0);
-      printf("RX0 \n\r");
     }
-    
+
   if(read & (1<<5)) //ERRIF
     {
        read &= ~(1<<5);
-       printf("ERRIf \n\r");
     }
   MCP_controll_write(read, MCP_CANINTF);
+  */
+  MCP_bit_modify(MCP_CANINTF,0b00000011,0b00);
 }
-
-/*
-
-ISR(INT0_vect){
-  cli();
-  latest_message = CAN_receive_message();
-  sei();
-}
-
-*/
