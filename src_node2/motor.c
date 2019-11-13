@@ -2,9 +2,15 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "dac.h"
+#include <stdlib.h>
 
 #include <util/delay.h>
 
+
+#define F_CPU 16000000UL //Clock speed
+
+int  right = 0;
+int left = 0;
 
 void MOTOR_init(){
     DAC_init();
@@ -57,7 +63,7 @@ uint16_t MOTOR_read_encoder(){
 
     /*Process received data*/
     int16_t encoder = ((((int16_t)ms_byte) << 8) | (int16_t)ls_byte);
-    printf("Encoder: %d\n\r", encoder);
+    //printf("Encoder: %d\n\r", encoder);
     return encoder;
 }
 
@@ -81,18 +87,50 @@ void MOTOR_set_direction(uint8_t direction){
 
 
 void MOTOR_joystic_set_speed(signed char joy_y){
-    //printf("joy_y; %d\n\r", joy_y);
+   // printf("joy_y; %d\n\r", joy_y);
     //unsigned char joy_y_raw = (unsigned char)joy_y*(MAX_JOYSTICK_VALUE-INITIAL_VALUE)/100 + INITIAL_VALUE;
     //unsigned char joy_y_raw = (unsigned char)joy_y*(MAX_JOYSTICK_VALUE-INITIAL_VALUE)/100 + INITIAL_VALUE;
     //printf("joy_y_raw; %d\n\r", joy_y_raw);
-    uint8_t threshold = 15;
+    uint8_t threshold = 2;
     if (joy_y < -threshold) {
         MOTOR_set_direction(0);
         MOTOR_set_speed(-joy_y);
+     //   printf("SETSPEED \n\r");
     }
     else if(joy_y > threshold){
         MOTOR_set_direction(1);
         MOTOR_set_speed(joy_y);
     }
 
-} 
+}
+
+void MOTOR_encoder_init(){
+    //Find Left wall
+    MOTOR_set_direction(0);
+    MOTOR_set_speed(100);
+    _delay_ms(1000);
+    left = MOTOR_read_encoder();
+    //printf("left %d\n\r", left);
+
+
+    //Find right wall
+    MOTOR_set_direction(1);
+    MOTOR_set_speed(100);
+    _delay_ms(1000);
+    right = MOTOR_read_encoder();
+    //printf("right %d\n\r", right);
+
+}
+
+int MOTOR_read_scaled_encoder(){
+    int middle = abs((left-right)/2);
+    //printf("mid: %d \n\r",middle);
+
+    int enc_raw = MOTOR_read_encoder();
+    
+    float enc_scaled = ((float)enc_raw- (float)middle)/((float)middle)*100;
+
+    return (int)(-enc_scaled); 
+
+}
+

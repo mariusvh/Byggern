@@ -111,6 +111,7 @@ void CAN_receive_message(int buffer_number, CAN_MESSAGE_t *message){
 
   for (uint8_t i = 0; i < message->length; i++) {
     MCP_controll_write(message->data[i], MCP_TXB0D0 + i);
+    //MCP_bit_modify(MCP_CANINTF,0b00000011,0b00);
   }
 
   /*Taking care of interrupts ish */
