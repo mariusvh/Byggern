@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "joystick.h"
+#include "slider.h"
 
 void CAN_init(uint8_t mode){
   MCP_init();
@@ -139,23 +140,27 @@ void CAN_send_controllers(CAN_MESSAGE_t *message){
   CAN_send_message(message);
 }
 
-void CAN_send_controllers_filter(CAN_MESSAGE_t *message, uint8_t prev_slider_position, signed char prev_joystick_positions[]){
-  uint8_t right_slider = ADC_read_right_slider();
-  uint8_t left_slider = ADC_read_left_slider();
+void CAN_send_controllers_filter(CAN_MESSAGE_t *message, signed char prev_right_slider_position, signed char prev_joystick_positions[]){
+ // uint8_t right_slider = ADC_read_right_slider();
+ // uint8_t left_slider = ADC_read_left_slider();
   JOYSTICK_position_t joystick = JOYSTICK_get_position_scaled();
+  SLIDER_positions_t sliders = SLIDER_get_scaled_position();
 
   uint8_t id = 0;
   message->id = id;
   message->data[0] = joystick.x_position;
   message->data[1] = joystick.y_position;
-  message->data[2] = right_slider;
-  message->data[3] = left_slider;
+  message->data[2] = sliders.right_slider; //right_slider;
+  message->data[3] = sliders.left_slider; //left_slider;
   message->length = 4;
-  CAN_send_message(message);
+  printf("x: %d\n\r", message->data[0]);
+  printf("y: %d\n\r", message->data[1]);
+  printf("Right slider: %d\n\r", message->data[2]);
+  printf("Left slider: %d\n\r", message->data[3]);
 
   /*Filter, we only send slider position when new postion is set*/
   uint8_t filter_threshold = 5;
-  if ((message->data[2]-prev_slider_position) > filter_threshold) {
+  if (abs(message->data[2])-abs(prev_right_slider_position) > filter_threshold) {
     CAN_send_message(message);
   }
   if ((abs(message->data[0])-abs(prev_joystick_positions[0]) > filter_threshold) || (abs(message->data[1])-abs(prev_joystick_positions[1]) > filter_threshold)) {
@@ -163,11 +168,11 @@ void CAN_send_controllers_filter(CAN_MESSAGE_t *message, uint8_t prev_slider_pos
   }
 
   /*Update prev_joystick_positions*/
-  for (size_t i = 0; i < message->length; i++) {
+  for (size_t i = 0; i < 2; i++) {
     prev_joystick_positions[i] = message->data[i];
   }
 
   /*Update prev_slider_positions*/
-  prev_slider_position = (uint8_t)message->data[3];
+  prev_right_slider_position = message->data[2];
 
 }
