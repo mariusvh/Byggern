@@ -33,12 +33,12 @@ int main() {
 
   CAN_MESSAGE_t *message;
   signed char prev_joystick_positions[2];
-  //signed char prev_right_slider_position;
+  signed char prev_right_slider_position;
   //uint8_t prev_slider_position;
   while(1){
     //CAN_send_controllers(message);
-    CAN_send_joystick_position(message, &prev_joystick_positions);
-    //CAN_send_controllers_filter(message, &prev_right_slider_position, &prev_joystick_positions);
+    //CAN_send_joystick_position(message, prev_joystick_positions);
+    CAN_send_controllers_filter(message, prev_right_slider_position, prev_joystick_positions);
 
     //CAN_send_slider_position(message_slider, &prev_slider_position);
     //_delay_ms(500);

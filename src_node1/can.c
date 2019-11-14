@@ -9,6 +9,9 @@
 #include "joystick.h"
 #include "slider.h"
 
+signed char prev_joystick_positions[2];
+signed char prev_right_slider_position;
+
 void CAN_init(uint8_t mode){
   MCP_init();
   MCP_controll_write(mode, MCP_CANCTRL);
@@ -104,7 +107,7 @@ void CAN_receive_message(int buffer_number, CAN_MESSAGE_t *message){
 
 
 
-void CAN_send_joystick_position(CAN_MESSAGE_t *message, signed char prev_joystick_positions[]){
+void CAN_send_joystick_position(CAN_MESSAGE_t *message){
   JOYSTICK_position_t joystick = JOYSTICK_get_position_scaled();
   uint8_t id = 0;
   message->id = id;
@@ -140,7 +143,7 @@ void CAN_send_controllers(CAN_MESSAGE_t *message){
   CAN_send_message(message);
 }
 
-void CAN_send_controllers_filter(CAN_MESSAGE_t *message, signed char prev_right_slider_position, signed char prev_joystick_positions[]){
+void CAN_send_controllers_filter(CAN_MESSAGE_t *message){
  // uint8_t right_slider = ADC_read_right_slider();
  // uint8_t left_slider = ADC_read_left_slider();
   JOYSTICK_position_t joystick = JOYSTICK_get_position_scaled();
@@ -154,25 +157,25 @@ void CAN_send_controllers_filter(CAN_MESSAGE_t *message, signed char prev_right_
   message->data[3] = sliders.left_slider; //left_slider;
   message->length = 4;
   printf("x: %d\n\r", message->data[0]);
+  printf("Right slider: %d\n\r", message->data[2]);
+  /*
   printf("y: %d\n\r", message->data[1]);
   printf("Right slider: %d\n\r", message->data[2]);
   printf("Left slider: %d\n\r", message->data[3]);
-
+  */
   /*Filter, we only send slider position when new postion is set*/
-  uint8_t filter_threshold = 5;
-  if (abs(message->data[2])-abs(prev_right_slider_position) > filter_threshold) {
+  uint8_t filter_threshold = 1;
+  if (abs(message->data[2]-prev_right_slider_position) > filter_threshold) {
+    prev_right_slider_position = message->data[2];
     CAN_send_message(message);
   }
-  if ((abs(message->data[0])-abs(prev_joystick_positions[0]) > filter_threshold) || (abs(message->data[1])-abs(prev_joystick_positions[1]) > filter_threshold)) {
+  if ((abs(message->data[0]-prev_joystick_positions[0]) > filter_threshold) || (abs(message->data[1]-prev_joystick_positions[1]) > filter_threshold)) {
     CAN_send_message(message);
+      /*Update prev_joystick_positions*/
+    for (size_t i = 0; i < 2; i++) {
+      prev_joystick_positions[i] = message->data[i];
+    }
   }
 
-  /*Update prev_joystick_positions*/
-  for (size_t i = 0; i < 2; i++) {
-    prev_joystick_positions[i] = message->data[i];
-  }
-
-  /*Update prev_slider_positions*/
-  prev_right_slider_position = message->data[2];
 
 }
