@@ -37,7 +37,7 @@ uint16_t MOTOR_read_encoder(){
     /*Set SEL low to get high byte*/
     PORTH &= ~(1<<PH3);
 
-    _delay_us(300);
+    _delay_us(20);
 
     /*Read MSB*/
     uint8_t ms_byte = PINK;
@@ -46,7 +46,7 @@ uint16_t MOTOR_read_encoder(){
     /*Set SEL high to get low byte*/
     PORTH |= (1<<PH3);
 
-    _delay_us(300);
+    _delay_us(20);
     /*read LSB*/
     uint8_t ls_byte = PINK;
     //printf("ls: %d\n\r", ls_byte);
@@ -109,8 +109,12 @@ void MOTOR_encoder_init(){
     MOTOR_set_direction(0);
     MOTOR_set_speed(100);
     _delay_ms(1000);
+    /*Toggle !RST to reset encoder*/
+    PORTH &= ~(1<<PH6);
+    _delay_us(20);
+    PORTH |= (1<<PH6);
     left = MOTOR_read_encoder();
-    //printf("left %d\n\r", left);
+    printf("left %d\n\r", left);
 
 
     //Find right wall
@@ -118,19 +122,24 @@ void MOTOR_encoder_init(){
     MOTOR_set_speed(100);
     _delay_ms(1000);
     right = MOTOR_read_encoder();
-    //printf("right %d\n\r", right);
+    printf("right %d\n\r", right);
+
 
 }
 
-int MOTOR_read_scaled_encoder(){
+signed char MOTOR_read_scaled_encoder(){
     int middle = abs((left-right)/2);
-    //printf("mid: %d \n\r",middle);
+   //printf("mid: %d \n\r",middle);
 
-    int enc_raw = MOTOR_read_encoder();
-    
-    float enc_scaled = ((float)enc_raw- (float)middle)/((float)middle)*100;
+    int enc_raw = abs(MOTOR_read_encoder());
 
-    return (int)(-enc_scaled); 
+    //printf("Enc_raw: %d\n\r",enc_raw);
 
+    signed char enc_scaled = ((float)enc_raw - (float)middle)/((float)middle)*100;
+
+    //printf("Enc_scaled: %d\n\r",enc_scaled);
+
+
+    return  enc_scaled; //maybe signed char
 }
 

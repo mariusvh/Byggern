@@ -8,6 +8,7 @@
 #include "servo.h"
 #include "ir.h"
 #include "motor.h"
+#include "pid.h"
 
 #define F_CPU 16000000UL //Clock speed
 #define FOSC 16000000 //Clock speed
@@ -19,7 +20,8 @@
 #include <avr/interrupt.h>
 
 CAN_MESSAGE_t *m_rec;
-signed char prev_y;
+uint8_t run_pid = 1;
+
 //signed char prev_right_slider;
 int main() {
   cli();
@@ -30,6 +32,9 @@ int main() {
   MOTOR_init();
   MOTOR_encoder_init();
   MOTOR_read_scaled_encoder();
+  PID_init();
+  int c = 0;
+
 
   sei();
   //MOTOR_set_direction(0);
@@ -38,31 +43,42 @@ int main() {
 
   while (1)
   {
-    //printf("enc_scaled: %d\n\r", MOTOR_read_scaled_encoder());
-    //MOTOR_set_speed(100);
+    if(run_pid){
+       PID_regulator();
+       run_pid = 0;
+    }
+    else
+    {
+      MOTOR_read_scaled_encoder();
+    }
+    
     //uint8_t points = IR_count_scores();
-    //MOTOR_read_encoder();
     //printf("Score: %d \n\r", points);
-
-    //CAN_receive_message(0,m_rec);
-    //SERVO_set_position(m_rec->data[0]);
-    //MOTOR_joystic_set_speed(m_rec->data[1]);
+    //MOTOR_joystic_set_speed(m_rec->data[2]);
     //printf("motor read: %d\n\r", MOTOR_read_encoder());
-    //printf("Y: %d\n\r",m_rec->data[1]);
+    //printf("enc_scaled: %d\n\r", MOTOR_read_scaled_encoder());
+    //_delay_ms(1000);
 
   }
   return 0;
 }
 
 ISR(INT2_vect){
-  cli();
+  //printf("CAN \n\r");
+  //cli();
   CAN_receive_message(0,m_rec);
   //printf("Right_slider: %d\n\r", m_rec->data[]);
-  //SERVO_set_position(m_rec->data[0], prev_y);
-  //MOTOR_joystic_set_speed(m_rec->data[1]);
-  printf("x: %d\n\r",m_rec->data[0]);
-  printf("y: %d\n\r",m_rec->data[1]);
+  SERVO_set_position(m_rec->data[0]);
+  //printf("x: %d\n\r",m_rec->data[0]);
+  //printf("y: %d\n\r",m_rec->data[1]);
   //printf("Right_slider: %d\n\r",m_rec->data[2]);
- // printf("Left_slider: %d\n\r",m_rec->data[3]);
-  sei();
+  PID_update_reference(m_rec->data[2]);
+  //printf("Left_slider: %d\n\r",m_rec->data[3]);
+  //sei();
+}
+
+ISR(TIMER3_COMPA_vect){
+  run_pid = 1;
+  //printf("TIMER3 \n\r");
+  TCNT3 = 0x00;
 }

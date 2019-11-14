@@ -1,8 +1,11 @@
 #include "pid.h"
 #include "motor.h"
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "avr/io.h"
 #include <avr/interrupt.h>
+
 
 
 /*
@@ -16,58 +19,189 @@ pid.error = 0;
 pid.prev_error = 0;
 
 */
-double I_term = 0;
 
+
+
+//PID_parameters_t *pid;
+
+float T = 0.01;//(1/PID_frequence); // 0.01 in time period
+float I_term = 0;
+float K_p = 1;
+float K_i = 0.8;
+float K_d = 15;
+int16_t error = -1;
+int16_t prev_error = -1;
+signed char reference = 0;
 
 void PID_init(){
+  
   /*Timer overflow interrupt is enabled*/
-  TIMSK5 |= (1<<TOIE5);
+//  TIMSK5 |= (1<<TOIE5);
 
   /*Timer5 with 256 prescaler, timestep???*/
-  TCCR5B |= (1<<CS52);
-  TCCR5B &= ~(1<<CS51);
-  TCCR5B &= ~(1<<CS50);
+//  TCCR5B |= (1<<CS52);
+//  TCCR5B &= ~(1<<CS51);
+//  TCCR5B &= ~(1<<CS50);
 
-  int16_t prescaler = 256;
+//  int prescaler = 256;
 
   /*Timer overflow flag is cleared*/
-  TIFR5 |=(1<<TOV5);
+//  TIFR5 |=(1<<TOV5);
+
+//  TCNT5 = 0x00;
 
   /*Set TOP*/
-  int TOP = (F_CPU)/(prescaler*PID_freq) - 1;
-  ICR5 = TOP;
+//  int TOP = 625; // (F_CPU)/(prescaler*PID_frequence); // 625 ticks
 
+//  printf("TOP: %d\n\r",TOP);
+
+//  ICR5 = TOP;
+
+  TCCR3A |= (1 << WGM32);
+  TCCR3B |= (1<<CS52);
+  TCCR3B &= ~(1<<CS51);
+  TCCR3B &= ~(1<<CS50);
+  int TOP = 625; // (F_CPU)/(prescaler*PID_frequence); // 625 ticks
+
+  printf("TOP: %d\n\r",TOP);
+
+  OCR3A = TOP;
+  TIMSK3 |= (1 << OCIE3A);
+  
 }
 
-void PID_set_parameters(double K_p, double K_i, double K_d, double reference){
-  PID_parameters_t *pid;
+void PID_update_reference(signed char ref){
+  reference = ref;
+}
+
+
+void PID_set_parameters(PID_parameters_t *pid, double K_p, double K_i, double K_d){
   pid->K_p = K_p;
   pid->K_i = K_i;
   pid->K_d = K_d;
-  pid->reference = reference;
-  pid->error = 0;
-  pid->prev_error = 0;
+  pid->error = -1;
+  pid->prev_error = -1;
 }
+
+
+void PID_regulator(){
+  signed char encoder_measurement = MOTOR_read_scaled_encoder(); //position
+
+ // printf("Encoder: %d\n\r", encoder_measurement);
+
+  printf("Reference: %d\n\r", reference);
+  
+  error = reference - encoder_measurement;
+
+  printf("Error: %d\n\r", error);
+
+  int P_term = error;
+
+  I_term = I_term + error*T;
+  
+  if (I_term > MAX_I_TERM)
+  {
+    I_term = MAX_I_TERM;
+  }
+  else if (I_term < -MAX_I_TERM)
+  {
+    I_term = -MAX_I_TERM;
+  }
+  
+
+
+  if (abs(error) < 2)
+  {
+    I_term = 0;
+  }
+
+
+  int D_term = (error-prev_error)*PID_frequence;
+
+
+
+
+  //printf("T %d\n\r", T);
+  //printf("K_p: %d  K_i: %d   K_d: %d\n\r", P_term, I_term, D_term);
+
+
+  int u = abs(K_p*P_term + K_i*I_term); // + K_d*D_term);
+
+///  int u = abs(K_p*P_term + K_d*D_term);
+
+  uint8_t error_threshold = 2;
+
+  if (abs(error) > error_threshold)
+  {
+    if (error < 0)
+    {
+      MOTOR_set_direction(0); //left
+      if (u > 100)
+      {
+        u = 100;
+      }
+    }
+    else
+    {
+      MOTOR_set_direction(1); //right
+      if (u > 100)
+      {
+        u = 100;
+      }
+    }
+  }
+
+  MOTOR_set_speed(u);
+  prev_error = error;
+
+  printf("PÅDRAG: %d\n\r", u);
+
+}
+
+
+
+
+
+
+
+
+/*
 
 void PID_regulator(PID_parameters_t *pid){
   uint8_t optimizing_scaler = 128; 
-  uint16_t prescaler = 256;
-  double frequency = F_CPU/prescaler;
-  double T = (1/frequency)*100;
-  double T_i = T/2;
-  double T_d = T/8;
-  pid->K_i = optimizing_scaler*pid->K_p*T/T_i;
-  pid->K_d = optimizing_scaler*pid->K_p*T_d/T;
-  pid->K_p = optimizing_scaler*pid->K_p;
- 
+  double T = (1/PID_frequence); // 0.01 in time period
 
-  int16_t encoder_measurement = MOTOR_read_encoder();
+  //Ziegler-N
+  double T_k = 0.02; // random
+  double T_i = T_k*0.5;
+  double T_d = T_k*0.12;
+
+  //Optimizing factor optimizes the compiler
   
-  pid->error= encoder_measurement - pid->reference;
+  pid->K_i = optimizing_scaler*pid->K_p*T/T_i;
+
+  pid->K_d = optimizing_scaler*pid->K_p*T_d/T;
+
+  pid->K_p = optimizing_scaler*pid->K_p;
+  
+
+  signed char encoder_measurement = MOTOR_read_scaled_encoder(); //position
+  
+  pid->error = pid->reference - encoder_measurement;
 
   double P_term = pid->K_p*pid->error;
 
   I_term = I_term + pid->K_i*pid->error;
+
+  if (I_term > MAX_I_TERM)
+  {
+    I_term = MAX_I_TERM;
+  }
+  else if (I_term < -MAX_I_TERM)
+  {
+    I_term = -MAX_I_TERM;
+  }
+  
 
   if (pid->error < 1)
   {
@@ -75,27 +209,27 @@ void PID_regulator(PID_parameters_t *pid){
   }
 
   double D_term = pid->K_d*(pid->error-pid->prev_error);
-  int16_t u_signed = P_term + I_term + D_term;
-  
+
+
   uint8_t u = P_term + I_term + D_term;
 
-  if (u < 255)
+  uint8_t error_threshold = 2;
+
+  if (u < 255 && u > 0 && abs(pid->error) > error_threshold)
   {
-     MOTOR_set_speed(u);
+    if (pid->error < 0)
+    {
+      MOTOR_set_direction(0); //left
+      MOTOR_set_speed(u);
+    }
+    else
+    {
+      MOTOR_set_direction(1); //right
+      MOTOR_set_speed(u);
+    }
   }
 
   pid->prev_error = pid->error;
 
-}
-
-
-
-/*
-
-
-ISR(TIMER5_OVF_vect){
-  cli();
-  PID_regulator();
-  sei();
 }
 */

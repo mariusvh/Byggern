@@ -19,6 +19,6 @@ void MOTOR_joystic_set_speed(signed char joy_y);
 
 void MOTOR_encoder_init();
 
-int MOTOR_read_scaled_encoder();
+signed char MOTOR_read_scaled_encoder();
 
 #endif

@@ -15,9 +15,10 @@ void CAN_init(uint8_t mode){
   MCP_controll_write(mode, MCP_CANCTRL);
   uint8_t read = MCP_CONTROLL_read(MCP_CANCTRL);
   //printf("can control register:  %x \n\r", read);
+ 
+  /*Interrupts*/
   MCP_bit_modify(MCP_CANINTE,0b00000011,0b11);
   MCP_bit_modify(MCP_CANINTF,0b00000011,0b00);
-  /*Interrupts*/
 
   /*Set interrupt to falling edge on PD2. The falling edge of INT2 generates asynchronously an interrupt request*/
   EICRA |= (1<<ISC01);
@@ -111,11 +112,9 @@ void CAN_receive_message(int buffer_number, CAN_MESSAGE_t *message){
 
   for (uint8_t i = 0; i < message->length; i++) {
     MCP_controll_write(message->data[i], MCP_TXB0D0 + i);
-    //MCP_bit_modify(MCP_CANINTF,0b00000011,0b00);
   }
 
-  /*Taking care of interrupts ish */
-  /*
+  /*Taking care of interrupts*/
   uint8_t read = MCP_CONTROLL_read(MCP_CANINTF);
   if(read & (1<<0)) //RX0 int
     {
@@ -127,6 +126,6 @@ void CAN_receive_message(int buffer_number, CAN_MESSAGE_t *message){
        read &= ~(1<<5);
     }
   MCP_controll_write(read, MCP_CANINTF);
-  */
+
   MCP_bit_modify(MCP_CANINTF,0b00000011,0b00);
 }

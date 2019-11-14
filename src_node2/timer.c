@@ -16,9 +16,6 @@ void TIMER_init_fast_pwm(uint8_t pwm_frec){
     TCCR1B &= ~(1<<CS11);
     TCCR1B &= ~(1<<CS10);
 
-    /*Interupt Flag cleared*/
-    //OCF1A =
-
     /*PB5/OC1A set to output mode*/
     DDRB |= (1<<PB5);
 
