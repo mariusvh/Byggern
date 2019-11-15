@@ -27,8 +27,8 @@ pid.prev_error = 0;
 float T = 0.01;//(1/PID_frequence); // 0.01 in time period
 float I_term = 0;
 float K_p = 1;
-float K_i = 0.8;
-float K_d = 15;
+float K_i = 1.5; // 0.8
+float K_d = 10; // 
 int16_t error = -1;
 int16_t prev_error = -1;
 signed char reference = 0;
@@ -37,6 +37,7 @@ void PID_init(){
   
   /*Timer overflow interrupt is enabled*/
 //  TIMSK5 |= (1<<TOIE5);
+
 
   /*Timer5 with 256 prescaler, timestep???*/
 //  TCCR5B |= (1<<CS52);
@@ -55,7 +56,7 @@ void PID_init(){
 
 //  printf("TOP: %d\n\r",TOP);
 
-//  ICR5 = TOP;
+//  OCR5A = TOP;
 
   TCCR3A |= (1 << WGM32);
   TCCR3B |= (1<<CS52);
@@ -63,7 +64,7 @@ void PID_init(){
   TCCR3B &= ~(1<<CS50);
   int TOP = 625; // (F_CPU)/(prescaler*PID_frequence); // 625 ticks
 
-  printf("TOP: %d\n\r",TOP);
+ // printf("TOP: %d\n\r",TOP);
 
   OCR3A = TOP;
   TIMSK3 |= (1 << OCIE3A);
@@ -89,15 +90,17 @@ void PID_regulator(){
 
  // printf("Encoder: %d\n\r", encoder_measurement);
 
-  printf("Reference: %d\n\r", reference);
+ // printf("Reference: %d\n\r", reference);
   
   error = reference - encoder_measurement;
 
-  printf("Error: %d\n\r", error);
+//  printf("Error: %d\n\r", error);
 
   int P_term = error;
 
   I_term = I_term + error*T;
+
+  /*
   
   if (I_term > MAX_I_TERM)
   {
@@ -107,10 +110,10 @@ void PID_regulator(){
   {
     I_term = -MAX_I_TERM;
   }
-  
+  */
 
 
-  if (abs(error) < 2)
+  if (abs(error) < 1)
   {
     I_term = 0;
   }
@@ -119,34 +122,32 @@ void PID_regulator(){
   int D_term = (error-prev_error)*PID_frequence;
 
 
-
-
   //printf("T %d\n\r", T);
   //printf("K_p: %d  K_i: %d   K_d: %d\n\r", P_term, I_term, D_term);
 
 
-  int u = abs(K_p*P_term + K_i*I_term); // + K_d*D_term);
+  int u = abs(K_p*P_term + K_i*I_term); //+ K_d*D_term);
 
 ///  int u = abs(K_p*P_term + K_d*D_term);
 
-  uint8_t error_threshold = 2;
+  uint8_t error_threshold = 1;
 
   if (abs(error) > error_threshold)
   {
     if (error < 0)
     {
       MOTOR_set_direction(0); //left
-      if (u > 100)
+      if (u > MAX_SPEED)
       {
-        u = 100;
+        u = MAX_SPEED;
       }
     }
     else
     {
       MOTOR_set_direction(1); //right
-      if (u > 100)
+      if (u > MAX_SPEED)
       {
-        u = 100;
+        u = MAX_SPEED;
       }
     }
   }
@@ -154,7 +155,7 @@ void PID_regulator(){
   MOTOR_set_speed(u);
   prev_error = error;
 
-  printf("PÅDRAG: %d\n\r", u);
+  //printf("PÅDRAG: %d\n\r", u);
 
 }
 

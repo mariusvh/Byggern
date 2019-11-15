@@ -6,7 +6,8 @@
 
  
 #define PID_frequence 100 // 100 Hz in frequency with 625 ticks
-#define MAX_I_TERM 50
+#define MAX_I_TERM 100
+#define MAX_SPEED 70 
 
 
 typedef struct PID_parameters_t PID_parameters_t;

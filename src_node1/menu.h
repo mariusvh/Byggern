@@ -26,6 +26,17 @@ struct MENU_arrow_t
   JOYSTICK_position_t prev_pos;
 };
 
+
+//
+
+typedef enum
+{
+	MENU = 0,
+	PLAY = 1
+}MENU_game_state_t;
+
+//
+
 MENU_t* MENU_set_new_menu(char* title, MENU_t* parent, uint8_t child_size);
 
 void MENU_set_child(MENU_t *menu, MENU_t *child, uint8_t index);
@@ -52,5 +63,12 @@ void MENU_select_menu(MENU_arrow_t *arrow);
 void MENU_main_menu(void);
 
 void MENU_init(void);
+
 void MENU_highscores(void);
+
+
+//
+uint8_t MENU_start_game();
+
+
 #endif

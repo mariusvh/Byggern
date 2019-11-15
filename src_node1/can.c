@@ -144,10 +144,11 @@ void CAN_send_controllers(CAN_MESSAGE_t *message){
 }
 
 void CAN_send_controllers_filter(CAN_MESSAGE_t *message){
- // uint8_t right_slider = ADC_read_right_slider();
+  uint8_t right_slider = ADC_read_right_slider();
  // uint8_t left_slider = ADC_read_left_slider();
   JOYSTICK_position_t joystick = JOYSTICK_get_position_scaled();
   SLIDER_positions_t sliders = SLIDER_get_scaled_position();
+  int right_button = SLIDER_right_button();
 
   uint8_t id = 0;
   message->id = id;
@@ -155,19 +156,21 @@ void CAN_send_controllers_filter(CAN_MESSAGE_t *message){
   message->data[1] = joystick.y_position;
   message->data[2] = sliders.right_slider; //right_slider;
   message->data[3] = sliders.left_slider; //left_slider;
-  message->length = 4;
-  printf("x: %d\n\r", message->data[0]);
+  message->data[4] = right_button; // 
+  message->length = 5; //4
+  //printf("x: %d\n\r", message->data[0]);
+  //printf("Right button: %d\n\r", message->data[4]);
+  
+  //printf("y: %d\n\r", message->data[1]);
   printf("Right slider: %d\n\r", message->data[2]);
-  /*
-  printf("y: %d\n\r", message->data[1]);
-  printf("Right slider: %d\n\r", message->data[2]);
-  printf("Left slider: %d\n\r", message->data[3]);
-  */
+ // printf("Right_ADC: %d\n\r", right_slider);
+  //printf("Left slider: %d\n\r", message->data[3]);
   /*Filter, we only send slider position when new postion is set*/
   uint8_t filter_threshold = 1;
   if (abs(message->data[2]-prev_right_slider_position) > filter_threshold) {
     prev_right_slider_position = message->data[2];
     CAN_send_message(message);
+
   }
   if ((abs(message->data[0]-prev_joystick_positions[0]) > filter_threshold) || (abs(message->data[1]-prev_joystick_positions[1]) > filter_threshold)) {
     CAN_send_message(message);
@@ -176,6 +179,9 @@ void CAN_send_controllers_filter(CAN_MESSAGE_t *message){
       prev_joystick_positions[i] = message->data[i];
     }
   }
-
-
+  if (message->data[4] == 1)
+  {
+    CAN_send_message(message);
+  }
+  
 }

@@ -9,6 +9,8 @@
 #include "ir.h"
 #include "motor.h"
 #include "pid.h"
+#include "solenoid.h"
+
 
 #define F_CPU 16000000UL //Clock speed
 #define FOSC 16000000 //Clock speed
@@ -22,6 +24,16 @@
 CAN_MESSAGE_t *m_rec;
 uint8_t run_pid = 1;
 
+  uint8_t x_joustick_index = 0;
+  uint8_t y_joystick_index = 1;
+  uint8_t right_slider_index = 2;
+  uint8_t left_slider_index = 3;
+  uint8_t right_button_index = 4;
+  int btn_pressed = 0;
+  //uint8_t points = 0;
+  int game_over = 0;
+
+
 //signed char prev_right_slider;
 int main() {
   cli();
@@ -33,7 +45,7 @@ int main() {
   MOTOR_encoder_init();
   MOTOR_read_scaled_encoder();
   PID_init();
-  int c = 0;
+  SOLENOID_init();
 
 
   sei();
@@ -43,17 +55,14 @@ int main() {
 
   while (1)
   {
-    if(run_pid){
-       PID_regulator();
-       run_pid = 0;
-    }
-    else
+    if (IR_game_over() != 1)
     {
-      MOTOR_read_scaled_encoder();
+      if(run_pid){
+        PID_regulator();
+        run_pid = 0;
+      }
     }
     
-    //uint8_t points = IR_count_scores();
-    //printf("Score: %d \n\r", points);
     //MOTOR_joystic_set_speed(m_rec->data[2]);
     //printf("motor read: %d\n\r", MOTOR_read_encoder());
     //printf("enc_scaled: %d\n\r", MOTOR_read_scaled_encoder());
@@ -64,17 +73,23 @@ int main() {
 }
 
 ISR(INT2_vect){
-  //printf("CAN \n\r");
-  //cli();
-  CAN_receive_message(0,m_rec);
-  //printf("Right_slider: %d\n\r", m_rec->data[]);
-  SERVO_set_position(m_rec->data[0]);
-  //printf("x: %d\n\r",m_rec->data[0]);
-  //printf("y: %d\n\r",m_rec->data[1]);
-  //printf("Right_slider: %d\n\r",m_rec->data[2]);
-  PID_update_reference(m_rec->data[2]);
-  //printf("Left_slider: %d\n\r",m_rec->data[3]);
-  //sei();
+  if (IR_game_over() != 1)
+  {
+    CAN_receive_message(0,m_rec);
+    SERVO_set_position(m_rec->data[0]);
+    PID_update_reference(m_rec->data[2]);
+    if (btn_pressed == 0 && m_rec->data[right_button_index])
+    {
+      SOLENOID_shoot();
+      //printf("Right button: %d\n\r",m_rec->data[right_button_index]);
+      btn_pressed = 1;
+    }
+    if (!m_rec->data[right_button_index])
+    {
+      btn_pressed = 0;
+    }
+  
+  }
 }
 
 ISR(TIMER3_COMPA_vect){

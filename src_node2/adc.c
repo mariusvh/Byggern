@@ -4,6 +4,7 @@ void ADC_init(){
     /*Set A0 to input from the photodiode */
     DDRF &= ~(1<<PF0);
 
+
     /*Enable ADC with 128 as prescaler*/
     ADCSRA |= (1<< ADEN) | (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0) ;
     

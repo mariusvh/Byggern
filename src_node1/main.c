@@ -32,17 +32,21 @@ int main() {
   CAN_init(MODE_NORMAL);
 
   CAN_MESSAGE_t *message;
-  signed char prev_joystick_positions[2];
-  signed char prev_right_slider_position;
+
+  //
+  MENU_game_state_t STATE = MENU;
+
+  //
+
   //uint8_t prev_slider_position;
   while(1){
     //CAN_send_controllers(message);
     //CAN_send_joystick_position(message, prev_joystick_positions);
-    CAN_send_controllers_filter(message, prev_right_slider_position, prev_joystick_positions);
+   // CAN_send_controllers_filter(message);
 
     //CAN_send_slider_position(message_slider, &prev_slider_position);
     //_delay_ms(500);
-
+/* PREV MENU
     MENU_move_arrow(&arrow);
     if (btn_pressed == 0 && SLIDER_right_button() || btn_pressed == 0 && SLIDER_left_button()){
       MENU_select_menu(&arrow);
@@ -52,6 +56,32 @@ int main() {
       btn_pressed = 0;
     }
 
+*/
+    SLIDER_get_scaled_position();
+    STATE = MENU_start_game();
+    switch (STATE)
+    {
+    case MENU:
+      MENU_move_arrow(&arrow);
+      if (btn_pressed == 0 && SLIDER_right_button() || btn_pressed == 0 && SLIDER_left_button()){
+        MENU_select_menu(&arrow);
+        btn_pressed = 1;
+      }
+      if (!SLIDER_right_button() && !SLIDER_left_button()) {
+        btn_pressed = 0;
+      } 
+      break;
+
+    case PLAY:
+      //_delay_ms(100);
+      CAN_send_controllers_filter(message);
+      break;
+
+    default:
+      break;
+    }
+
   }
+
   return 0;
 }

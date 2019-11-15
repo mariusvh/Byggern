@@ -1,5 +1,6 @@
 #include "slider.h"
 #include "adc.h"
+#include <stdio.h>
 
 SLIDER_positions_t SLIDER_get_scaled_position(void){
 	SLIDER_positions_t sliders;
@@ -9,6 +10,8 @@ SLIDER_positions_t SLIDER_get_scaled_position(void){
 
 	sliders.right_slider = (signed char)(right_slider-INITIAL_VALUE)/(MAX_JOYSTICK_VALUE-INITIAL_VALUE)*100;
 	sliders.left_slider = (signed char)(left_slider-INITIAL_VALUE)/(MAX_JOYSTICK_VALUE-INITIAL_VALUE)*100;
+	//printf("Right slider: %d\n\r", sliders.right_slider);
+ 	//printf("Right_ADC: %d\n\r", right_slider);
 
 	return sliders;
 }
