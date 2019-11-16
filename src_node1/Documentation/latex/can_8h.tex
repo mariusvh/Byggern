@@ -1,0 +1,150 @@
+\hypertarget{can_8h}{}\section{node\+\_\+1\+\_\+src/can.h File Reference}
+\label{can_8h}\index{node\+\_\+1\+\_\+src/can.\+h@{node\+\_\+1\+\_\+src/can.\+h}}
+
+
+Driver for the C\+AN communication.  
+
+
+{\ttfamily \#include $<$avr/io.\+h$>$}\\*
+Include dependency graph for can.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structCAN__MESSAGE}{C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+GE}
+\begin{DoxyCompactList}\small\item\em A structure to represent the C\+AN messages. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \hyperlink{structCAN__MESSAGE}{C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+GE} \hyperlink{can_8h_a199d1cf0ff455e6868b2f88a20f1471e}{C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+t}\hypertarget{can_8h_a199d1cf0ff455e6868b2f88a20f1471e}{}\label{can_8h_a199d1cf0ff455e6868b2f88a20f1471e}
+
+\begin{DoxyCompactList}\small\item\em A structure to represent the C\+AN messages. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{can_8h_adb0f99207facf71ca3429c6108d42d43}{C\+A\+N\+\_\+init} (uint8\+\_\+t mode)
+\begin{DoxyCompactList}\small\item\em Initialization of the C\+AN communication. Defines mode of communication and initializes the interrupts. \end{DoxyCompactList}\item 
+void \hyperlink{can_8h_a36ebf41a8539b6e774ccc7f67baf05a5}{C\+A\+N\+\_\+send\+\_\+message} (\hyperlink{can_8h_a199d1cf0ff455e6868b2f88a20f1471e}{C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+t} $\ast$message)
+\begin{DoxyCompactList}\small\item\em Sends the message {\ttfamily message} onto the C\+AN bus. \end{DoxyCompactList}\item 
+void \hyperlink{can_8h_a4ee576686c8ca49e01ea254b597605a0}{C\+A\+N\+\_\+receive\+\_\+message} (int buffer\+\_\+number, \hyperlink{can_8h_a199d1cf0ff455e6868b2f88a20f1471e}{C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+t} $\ast$message)
+\begin{DoxyCompactList}\small\item\em Recieves message from C\+AN bus and updates {\ttfamily message} . \end{DoxyCompactList}\item 
+void \hyperlink{can_8h_a23ce2204506e0e2c12649b9e88506e72}{C\+A\+N\+\_\+send\+\_\+joystick\+\_\+position} (\hyperlink{can_8h_a199d1cf0ff455e6868b2f88a20f1471e}{C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+t} $\ast$message)
+\begin{DoxyCompactList}\small\item\em Sends the X-\/ and Y-\/position from the joystic to the C\+AN bus. \end{DoxyCompactList}\item 
+void \hyperlink{can_8h_a6f1e0a9fda876c0502def1cb251e6f9e}{C\+A\+N\+\_\+send\+\_\+controllers\+\_\+filter} (\hyperlink{can_8h_a199d1cf0ff455e6868b2f88a20f1471e}{C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+t} $\ast$message)
+\begin{DoxyCompactList}\small\item\em Sends the X-\/ and Y-\/position of the joystick, the position of the right and left slider, and the output from the right and left button onto the C\+AN bus. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Driver for the C\+AN communication. 
+
+\begin{DoxyAuthor}{Author}
+Magnus Haukeland, Wai-\/\+Yen Chan and Marius von Hafenbrädl 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\index{can.\+h@{can.\+h}!C\+A\+N\+\_\+init@{C\+A\+N\+\_\+init}}
+\index{C\+A\+N\+\_\+init@{C\+A\+N\+\_\+init}!can.\+h@{can.\+h}}
+\subsubsection[{\texorpdfstring{C\+A\+N\+\_\+init(uint8\+\_\+t mode)}{CAN_init(uint8_t mode)}}]{\setlength{\rightskip}{0pt plus 5cm}void C\+A\+N\+\_\+init (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t}]{mode}
+\end{DoxyParamCaption}
+)}\hypertarget{can_8h_adb0f99207facf71ca3429c6108d42d43}{}\label{can_8h_adb0f99207facf71ca3429c6108d42d43}
+
+
+Initialization of the C\+AN communication. Defines mode of communication and initializes the interrupts. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em mode} & Selecting communication mode. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 15 of file can.\+c.
+
+\index{can.\+h@{can.\+h}!C\+A\+N\+\_\+receive\+\_\+message@{C\+A\+N\+\_\+receive\+\_\+message}}
+\index{C\+A\+N\+\_\+receive\+\_\+message@{C\+A\+N\+\_\+receive\+\_\+message}!can.\+h@{can.\+h}}
+\subsubsection[{\texorpdfstring{C\+A\+N\+\_\+receive\+\_\+message(int buffer\+\_\+number, C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+t $\ast$message)}{CAN_receive_message(int buffer_number, CAN_MESSAGE_t *message)}}]{\setlength{\rightskip}{0pt plus 5cm}void C\+A\+N\+\_\+receive\+\_\+message (
+\begin{DoxyParamCaption}
+\item[{int}]{buffer\+\_\+number, }
+\item[{{\bf C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+t} $\ast$}]{message}
+\end{DoxyParamCaption}
+)}\hypertarget{can_8h_a4ee576686c8ca49e01ea254b597605a0}{}\label{can_8h_a4ee576686c8ca49e01ea254b597605a0}
+
+
+Recieves message from C\+AN bus and updates {\ttfamily message} . 
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer\+\_\+number} & Decides which buffer to recieve from. \\
+\hline
+{\em } & \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 76 of file can.\+c.
+
+\index{can.\+h@{can.\+h}!C\+A\+N\+\_\+send\+\_\+controllers\+\_\+filter@{C\+A\+N\+\_\+send\+\_\+controllers\+\_\+filter}}
+\index{C\+A\+N\+\_\+send\+\_\+controllers\+\_\+filter@{C\+A\+N\+\_\+send\+\_\+controllers\+\_\+filter}!can.\+h@{can.\+h}}
+\subsubsection[{\texorpdfstring{C\+A\+N\+\_\+send\+\_\+controllers\+\_\+filter(\+C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+t $\ast$message)}{CAN_send_controllers_filter(CAN_MESSAGE_t *message)}}]{\setlength{\rightskip}{0pt plus 5cm}void C\+A\+N\+\_\+send\+\_\+controllers\+\_\+filter (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+t} $\ast$}]{message}
+\end{DoxyParamCaption}
+)}\hypertarget{can_8h_a6f1e0a9fda876c0502def1cb251e6f9e}{}\label{can_8h_a6f1e0a9fda876c0502def1cb251e6f9e}
+
+
+Sends the X-\/ and Y-\/position of the joystick, the position of the right and left slider, and the output from the right and left button onto the C\+AN bus. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & The message that is beeing sent. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 152 of file can.\+c.
+
+\index{can.\+h@{can.\+h}!C\+A\+N\+\_\+send\+\_\+joystick\+\_\+position@{C\+A\+N\+\_\+send\+\_\+joystick\+\_\+position}}
+\index{C\+A\+N\+\_\+send\+\_\+joystick\+\_\+position@{C\+A\+N\+\_\+send\+\_\+joystick\+\_\+position}!can.\+h@{can.\+h}}
+\subsubsection[{\texorpdfstring{C\+A\+N\+\_\+send\+\_\+joystick\+\_\+position(\+C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+t $\ast$message)}{CAN_send_joystick_position(CAN_MESSAGE_t *message)}}]{\setlength{\rightskip}{0pt plus 5cm}void C\+A\+N\+\_\+send\+\_\+joystick\+\_\+position (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+t} $\ast$}]{message}
+\end{DoxyParamCaption}
+)}\hypertarget{can_8h_a23ce2204506e0e2c12649b9e88506e72}{}\label{can_8h_a23ce2204506e0e2c12649b9e88506e72}
+
+
+Sends the X-\/ and Y-\/position from the joystic to the C\+AN bus. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 129 of file can.\+c.
+
+\index{can.\+h@{can.\+h}!C\+A\+N\+\_\+send\+\_\+message@{C\+A\+N\+\_\+send\+\_\+message}}
+\index{C\+A\+N\+\_\+send\+\_\+message@{C\+A\+N\+\_\+send\+\_\+message}!can.\+h@{can.\+h}}
+\subsubsection[{\texorpdfstring{C\+A\+N\+\_\+send\+\_\+message(\+C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+t $\ast$message)}{CAN_send_message(CAN_MESSAGE_t *message)}}]{\setlength{\rightskip}{0pt plus 5cm}void C\+A\+N\+\_\+send\+\_\+message (
+\begin{DoxyParamCaption}
+\item[{{\bf C\+A\+N\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+t} $\ast$}]{message}
+\end{DoxyParamCaption}
+)}\hypertarget{can_8h_a36ebf41a8539b6e774ccc7f67baf05a5}{}\label{can_8h_a36ebf41a8539b6e774ccc7f67baf05a5}
+
+
+Sends the message {\ttfamily message} onto the C\+AN bus. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em message} & The message that is beeing sent. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 36 of file can.\+c.
+
