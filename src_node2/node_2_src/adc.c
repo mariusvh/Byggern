@@ -15,7 +15,7 @@ void ADC_init(){
     ADMUX |= (1<<ADLAR);
 
     /*Read the photodiode signal*/
-    ADC_read();
+    //ADC_read();
 }
 
 uint16_t ADC_read(){

@@ -128,7 +128,7 @@ void CAN_receive_message(int buffer_number, CAN_MESSAGE_t *message){
 
 void CAN_send_joystick_position(CAN_MESSAGE_t *message){
   JOYSTICK_position_t joystick = JOYSTICK_get_position_scaled();
-  uint8_t id = 0;
+  uint8_t id = 1;
   message->id = id;
   message->data[0] = joystick.x_position;
   message->data[1] = joystick.y_position;
@@ -157,7 +157,7 @@ void CAN_send_controllers_filter(CAN_MESSAGE_t *message){
   int right_button = SLIDER_right_button();
   int left_button = SLIDER_left_button();
 
-  uint8_t id = 0;
+  uint8_t id = 4;
   message->id = id;
   message->data[0] = joystick.x_position;
   message->data[1] = joystick.y_position;

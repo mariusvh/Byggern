@@ -48,8 +48,8 @@ uint16_t IR_digital_filter(){
 
 uint16_t IR_count_scores(){
     /*Sliders intterupt for some reason*/
-    uint16_t score_threshold = 20;
-    uint16_t no_score_threshold = 40;
+    uint16_t score_threshold = 5;
+    uint16_t no_score_threshold = 80;
     if (IR_digital_filter() <= score_threshold && flag == 0)
     {   
         score = score + 1;
@@ -59,14 +59,14 @@ uint16_t IR_count_scores(){
     {
         flag = 0;
     }
-    
+    printf("Score: %d\n\r", score);
     return score;    
 }
 
 uint8_t IR_game_over(){
     uint8_t score_limit = 2;
     score = IR_count_scores();
-    printf("Score: %d \n\r", score);
+    //printf("Score: %d \n\r", score);
     if (score >= score_limit)
     {
         return 1;

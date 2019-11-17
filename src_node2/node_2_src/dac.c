@@ -5,6 +5,11 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
+#ifndef F_CPU
+#define F_CPU 16000000UL //Clock speed
+#endif
+
+
 
 void DAC_init(){
     sei();

@@ -50,7 +50,8 @@ uint8_t ADC_read_Y_joystick(void);
  * @brief Reads the position of the left slider from the ADC.
  * 
  * @return uint8_t returns the position of the left slider, a value between 0-255.
- */t8_t ADC_read_left_slider(void)
+ */
+uint8_t ADC_read_left_slider(void);
 
 
 /**

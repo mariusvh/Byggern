@@ -42,12 +42,12 @@ int main() {
 
   sei();
 
-  m_receive->data[0] = 0;
+ // m_receive->data[0] = 0;
 
 
   while(1){
     
-    printf("State: %d\n\r", STATE);
+    //printf("State: %d\n\r", STATE);
 
     switch (STATE)
     {
@@ -66,11 +66,11 @@ int main() {
     case PLAY:
       //_delay_ms(100);
       CAN_send_controllers_filter(message);
+      //printf("state: %d\n\r",STATE);
       break;
 
     case GAMEOVER:
-      printf("GAMEOVER");
-      MENU_game_over();
+      //printf("GAMEOVER");
       break;
 
     default:
@@ -83,10 +83,10 @@ int main() {
 
 ISR(INT2_vect){
   CAN_receive_message(0,m_receive);
-  if (m_receive->data[0] == 2)
+  if (m_receive->data[0] > 1)
   {
     STATE = GAMEOVER;
-    m_receive->data[0] = 0;
+    MENU_game_over();
   }
   printf("Received: %d\n\r", m_receive->data[0]);
 }

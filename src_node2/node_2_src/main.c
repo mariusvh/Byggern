@@ -33,8 +33,10 @@ uint8_t y_joystick_index = 1;
 uint8_t right_slider_index = 2;
 uint8_t left_slider_index = 3;
 uint8_t right_button_index = 4;
+
 int btn_pressed = 0;
 int game_over = 0;
+uint8_t lives = 0;
 
 int main() {
   cli();
@@ -51,13 +53,17 @@ int main() {
   sei();
 
   game_over = 0;
-  uint8_t score_limit = 2;
+  static uint8_t score_limit = 2;
 
   while (1)
-  {
-    if (IR_game_over() != 1)
+  { 
+
+    lives = IR_count_scores();
+
+
+    if (lives < score_limit)//IR_game_over() != 1)
     {
-      printf("run_pid: %d\n\r", run_pid);
+      //printf("run_pid: %d\n\r", run_pid);
       if(run_pid){
         PID_regulator();
         run_pid = 0;
@@ -66,17 +72,16 @@ int main() {
      // After game
     else
     {
-      printf("game_over: %d\n\r", game_over);
 
       if (!game_over)
       { 
-        CAN_construct_message(m_send, score_limit, 1, 1);
         printf("Sending: %d\n\r",m_send->data[0]);
+        CAN_construct_message(m_send, score_limit, 0, 1);
         CAN_send_message(m_send);
         game_over = 1;
-        score_limit = 0;
-        CAN_construct_message(m_send, score_limit, 1, 1);
-        CAN_send_message(m_send);
+        //score_limit = 0;
+        //CAN_construct_message(m_send, score_limit, 0, 1);
+        //CAN_send_message(m_send);
       }
       /* 
       printf("Sending: %d\n\r",m_send->data[0]);
@@ -91,7 +96,7 @@ int main() {
 }
 
 ISR(INT2_vect){
-  if (IR_game_over() != 1)
+  if (lives < 2)//IR_game_over() != 1)
   {
     CAN_receive_message(0,m_rec);
     SERVO_set_position(m_rec->data[0]);
@@ -106,6 +111,8 @@ ISR(INT2_vect){
       btn_pressed = 0;
     }
   }
+
+  
 }
 
 ISR(TIMER3_COMPA_vect){
