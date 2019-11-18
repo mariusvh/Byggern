@@ -10,6 +10,7 @@
 #include "motor.h"
 #include "pid.h"
 #include "solenoid.h"
+#include "melody.h"
 
 
 #define F_CPU 16000000UL //Clock speed
@@ -17,7 +18,6 @@
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1
 #include "util/delay.h"
-#define F_CPU 16000000UL
 #include "avr/io.h"
 #include <avr/interrupt.h>
 
@@ -51,6 +51,14 @@ int main() {
   SOLENOID_init();
 
   sei();
+
+  while (1)
+  {
+    MELODY_play(1);
+    MELODY_play(1);
+    MELODY_play(2);
+  }
+  
 
   game_over = 0;
   static uint8_t score_limit = 2;

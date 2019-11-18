@@ -13,6 +13,7 @@
 #include "can.h"
 #include "MCP2515.h"
 #include <avr/interrupt.h>
+#include "snake.h"
 
 #define F_CPU 4915200
 #include <util/delay.h>
@@ -42,7 +43,8 @@ int main() {
 
   sei();
 
- // m_receive->data[0] = 0;
+  // m_receive->data[0] = 0;
+  //SNAKE_run();
 
 
   while(1){
@@ -63,10 +65,14 @@ int main() {
       } 
       break;
 
-    case PLAY:
+    case PLAY_PONG:
       //_delay_ms(100);
       CAN_send_controllers_filter(message);
       //printf("state: %d\n\r",STATE);
+      break;
+    
+    case PLAY_SNAKE:
+      
       break;
 
     case GAMEOVER:

@@ -55,13 +55,22 @@ void MENU_init_menus(void){
   MENU_t *new_game = MENU_set_new_menu("START NEW GAME", main_menu,1);
   MENU_t *show_highscores = MENU_set_new_menu("SHOW HIGHSCORES", highscores,2);
   MENU_t *reset_highscores = MENU_set_new_menu("RESET HIGHSCORES", highscores,2);
+  MENU_t *play_snake = MENU_set_new_menu("PLAY SNAKE", new_game,3);
+  MENU_t *snake_easy = MENU_set_new_menu("EASY", play_snake,1);
+  MENU_t *snake_medium = MENU_set_new_menu("MEDIUM", play_snake,1);
+  MENU_t *snake_hard = MENU_set_new_menu("HARD", play_snake,1);
+
 
   // Starting game adding
-  MENU_t *start_game = MENU_set_new_menu("START GAME!", new_game, 2);
+  MENU_t *start_game = MENU_set_new_menu("PLAY PONG", new_game, 3);
+
+  MENU_t *pong_easy = MENU_set_new_menu("EASY", start_game,1);
+  MENU_t *pong_medium = MENU_set_new_menu("MEDIUM", start_game,1);
+  MENU_t *pong_hard = MENU_set_new_menu("HARD", start_game,1);
   //
   //Game over
   MENU_t *game_over = MENU_set_new_menu("GAME OVER :P", NULL, 0);
-  //
+  // ADD :( FACE ON OLED
 
   game_over_menu = game_over;
 
@@ -69,8 +78,19 @@ void MENU_init_menus(void){
   MENU_set_child(main_menu, highscores, 1);
   // Starting game adding
   MENU_set_child(new_game,start_game,0);
+  MENU_set_child(new_game,play_snake,1);
+
+  MENU_set_child(play_snake,snake_easy,0);
+  MENU_set_child(play_snake,snake_medium,1);
+  MENU_set_child(play_snake,snake_hard,2);
+
+  MENU_set_child(start_game,pong_easy,0);
+  MENU_set_child(start_game,pong_medium,1);
+  MENU_set_child(start_game,pong_hard,2);
+
+
  // MENU_set_child(start_game,);
-  game_menu = start_game;
+  game_menu = pong_easy;
   //
   MENU_set_child(highscores, show_highscores,0);
   MENU_set_child(highscores,reset_highscores, 1);
@@ -80,7 +100,7 @@ void MENU_init_menus(void){
   MENU_print_menu(current_menu);
 }
 
-void MENU_creation(MENU_t *main_menu, MENU_t *highscores, MENU_t *show_highscores, MENU_t *reset_highscores, MENU_t *start_new_game) {
+/*void MENU_creation(MENU_t *main_menu, MENU_t *highscores, MENU_t *show_highscores, MENU_t *reset_highscores, MENU_t *start_new_game, MENU_t *play_snake) {
   main_menu->menu_title = "MAIN MENU";
   main_menu->parent = NULL;
   main_menu->child_array = malloc(sizeof(MENU_t*)*2);
@@ -102,7 +122,11 @@ void MENU_creation(MENU_t *main_menu, MENU_t *highscores, MENU_t *show_highscore
 
   start_new_game->menu_title = "START NEW GAME";
   start_new_game->parent = main_menu;
-}
+
+  play_snake->menu_title = "PLAYING SNAKE";
+  play_snake->parent = start_new_game;
+
+}*/
 
 void MENU_arrow_creation(MENU_arrow_t *arrow){
   arrow->arrow_page = 2;
@@ -175,7 +199,7 @@ void MENU_select_menu(MENU_arrow_t *arrow){
         // Starting game
         if (current_menu == game_menu)
         {
-          start_game = PLAY;
+          start_game = PLAY_PONG;
         }
         //
       }

@@ -5,13 +5,13 @@
 #include "joystick.h"
 
 #define ARROW_COL 20
-#define TITLE_COL 20
+#define TITLE_COL 12
 #define CHILD_COL 32
 
-typedef struct MENU_t MENU_t;
-typedef struct MENU_arrow_t MENU_arrow_t;
+typedef struct MENU MENU_t;
+typedef struct MENU_arrow MENU_arrow_t;
 
- struct MENU_t
+struct MENU
 {
 	char* menu_title;
 	MENU_t* parent;
@@ -19,7 +19,7 @@ typedef struct MENU_arrow_t MENU_arrow_t;
 
 };
 
-struct MENU_arrow_t
+struct MENU_arrow
 {
   int arrow_page;
   JOYSTICK_direction_t prev_dir;
@@ -32,12 +32,12 @@ struct MENU_arrow_t
 typedef enum
 {
 	MENU = 0,
-	PLAY = 1,
-  GAMEOVER = 2
+	PLAY_PONG = 1,
+  GAMEOVER = 2,
+  PLAY_SNAKE = 3
 }MENU_game_state_t;
 
 //
-
 MENU_t* MENU_set_new_menu(char* title, MENU_t* parent, uint8_t child_size);
 
 void MENU_set_child(MENU_t *menu, MENU_t *child, uint8_t index);
