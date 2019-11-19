@@ -13,8 +13,8 @@ typedef struct MENU_arrow MENU_arrow_t;
 
 struct MENU
 {
-	char* menu_title;
-	MENU_t* parent;
+  char* menu_title;
+  MENU_t* parent;
   MENU_t** child_array;
 
 };
@@ -57,7 +57,7 @@ void MENU_arrow_get_position(MENU_arrow_t *arrow);
 
 JOYSTICK_direction_t MENU_move_arrow(MENU_arrow_t *arrow);
 
-int MENU_set_arrow(MENU_arrow_t *arrow, uint8_t page);
+int MENU_set_arrow(MENU_arrow_t *arrow, uint8_t page, volatile MENU_t *menu);
 
 void MENU_select_menu(MENU_arrow_t *arrow);
 
@@ -67,9 +67,11 @@ void MENU_init(void);
 
 void MENU_highscores(void);
 
+void MENU_return(MENU_arrow_t *arrow);
+
 
 //
-uint8_t MENU_start_game();
+uint8_t MENU_return_state();
 
 
 void MENU_game_over();

@@ -25,10 +25,11 @@ CAN_MESSAGE_t *m_rec;
 
 CAN_MESSAGE_t *m_send;
 
+int rec = 1;
 
 uint8_t run_pid = 1;
 
-uint8_t x_joustick_index = 0;
+uint8_t x_joystick_index = 0;
 uint8_t y_joystick_index = 1;
 uint8_t right_slider_index = 2;
 uint8_t left_slider_index = 3;
@@ -52,12 +53,12 @@ int main() {
 
   sei();
 
-  while (1)
+  /*while (1)
   {
     MELODY_play(1);
     MELODY_play(1);
     MELODY_play(2);
-  }
+  }*/
   
 
   game_over = 0;
@@ -68,35 +69,42 @@ int main() {
 
     lives = IR_count_scores();
 
+    while (!(rec))
+    {
+        game_over = 0;
+        lives = 0;
+    }
+    
 
     if (lives < score_limit)//IR_game_over() != 1)
     {
       //printf("run_pid: %d\n\r", run_pid);
       if(run_pid){
         PID_regulator();
-        run_pid = 0;
+        //run_pid = 0;
       }
     }
-     // After game
-    else
-    {
 
-      if (!game_over)
-      { 
+     // After game
+    else if (!game_over){
+
         printf("Sending: %d\n\r",m_send->data[0]);
         CAN_construct_message(m_send, score_limit, 0, 1);
         CAN_send_message(m_send);
+        IR_clear_score();
         game_over = 1;
+        rec = 0;
         //score_limit = 0;
         //CAN_construct_message(m_send, score_limit, 0, 1);
         //CAN_send_message(m_send);
-      }
-      /* 
-      printf("Sending: %d\n\r",m_send->data[0]);
-      uint16_t score = IR_count_scores();
-      CAN_construct_message(m_send, score, 1, 1);
-      CAN_send_message(m_send);*/
+        /* 
+        printf("Sending: %d\n\r",m_send->data[0]);
+        uint16_t score = IR_count_scores();
+        CAN_construct_message(m_send, score, 1, 1);
+        CAN_send_message(m_send);*/
     }
+
+    run_pid = 0;
 
 
   }
@@ -106,6 +114,7 @@ int main() {
 ISR(INT2_vect){
   if (lives < 2)//IR_game_over() != 1)
   {
+    rec = 1;
     CAN_receive_message(0,m_rec);
     SERVO_set_position(m_rec->data[0]);
     PID_update_reference(m_rec->data[2]);

@@ -14,5 +14,5 @@ uint8_t IR_game_over();
 
 uint8_t IR_return_score();
 
-
+void IR_clear_score();
 #endif

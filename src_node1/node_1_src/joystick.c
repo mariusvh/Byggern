@@ -39,7 +39,9 @@ JOYSTICK_position_t JOYSTICK_get_position_scaled(void){
 JOYSTICK_direction_t JOYSTICK_get_direction(void){
 	JOYSTICK_position_t joystick = JOYSTICK_get_position_scaled();
 
-	uint8_t offset_value = 5;
+    //printf("Backstick_y: %d\n\r", joystick.y_position);
+
+	uint8_t offset_value = 10;
 
 	// returns error if x or y is 0
 	double angle = atan2(joystick.y_position, joystick.x_position); // the function takes into account the sign of both arguments in order to determine the quadrant.

@@ -6,13 +6,31 @@
 #include "slider.h"
 
 volatile MENU_t *current_menu;
-
-//
 volatile MENU_t *game_menu;
-uint8_t start_game = MENU;
+volatile MENU_t *main_global_menu;
 
+uint8_t state = MENU;
 
 volatile MENU_t *game_over_menu;
+
+  MENU_t *main_menu;
+  MENU_t *highscores;
+  MENU_t *new_game;
+  MENU_t *settings;
+  MENU_t *show_highscores;
+  MENU_t *reset_highscores;
+  MENU_t *play_snake;
+  MENU_t *snake_easy;
+  MENU_t *snake_medium;
+   // Starting game adding
+  MENU_t *start_game;
+  MENU_t *pong_easy;
+  MENU_t *pong_medium;
+  //
+  //Game over
+  MENU_t *game_over;
+  // ADD :( FACE ON OLED
+  
 
 //
 
@@ -50,43 +68,41 @@ void MENU_print_menu(volatile MENU_t *menu){
 
 void MENU_init_menus(void){
 
-  MENU_t *main_menu = MENU_set_new_menu("MAIN MENU", NULL,2);
-  MENU_t *highscores = MENU_set_new_menu("HIGHSCORES", main_menu,2);
-  MENU_t *new_game = MENU_set_new_menu("START NEW GAME", main_menu,1);
-  MENU_t *show_highscores = MENU_set_new_menu("SHOW HIGHSCORES", highscores,2);
-  MENU_t *reset_highscores = MENU_set_new_menu("RESET HIGHSCORES", highscores,2);
-  MENU_t *play_snake = MENU_set_new_menu("PLAY SNAKE", new_game,3);
-  MENU_t *snake_easy = MENU_set_new_menu("EASY", play_snake,1);
-  MENU_t *snake_medium = MENU_set_new_menu("MEDIUM", play_snake,1);
-  MENU_t *snake_hard = MENU_set_new_menu("HARD", play_snake,1);
-
-
+  main_menu = MENU_set_new_menu("MAIN MENU", NULL,3);
+  highscores = MENU_set_new_menu("HIGHSCORES", main_menu,3);
+  new_game = MENU_set_new_menu("START NEW GAME", main_menu,2);
+  settings = MENU_set_new_menu("SETTINGS", main_menu,3);
+  show_highscores = MENU_set_new_menu("SHOW HIGHSCORES", highscores,2);
+  reset_highscores = MENU_set_new_menu("RESET HIGHSCORES", highscores,2);
+  play_snake = MENU_set_new_menu("PLAY SNAKE", new_game,2);
+  snake_easy = MENU_set_new_menu("EASY", play_snake,1);
+  snake_medium = MENU_set_new_menu("HARDER", play_snake,1);
   // Starting game adding
-  MENU_t *start_game = MENU_set_new_menu("PLAY PONG", new_game, 3);
-
-  MENU_t *pong_easy = MENU_set_new_menu("EASY", start_game,1);
-  MENU_t *pong_medium = MENU_set_new_menu("MEDIUM", start_game,1);
-  MENU_t *pong_hard = MENU_set_new_menu("HARD", start_game,1);
+  start_game = MENU_set_new_menu("PLAY PONG", new_game, 2);
+  pong_easy = MENU_set_new_menu("EASY", start_game,1);
+  pong_medium = MENU_set_new_menu("HARDER", start_game,1);
   //
   //Game over
-  MENU_t *game_over = MENU_set_new_menu("GAME OVER :P", NULL, 0);
+  game_over = MENU_set_new_menu("GAME OVER :P", NULL, 0);
   // ADD :( FACE ON OLED
 
   game_over_menu = game_over;
 
   MENU_set_child(main_menu, new_game, 0);
   MENU_set_child(main_menu, highscores, 1);
+  MENU_set_child(main_menu, settings, 2);
+
   // Starting game adding
   MENU_set_child(new_game,start_game,0);
   MENU_set_child(new_game,play_snake,1);
 
   MENU_set_child(play_snake,snake_easy,0);
   MENU_set_child(play_snake,snake_medium,1);
-  MENU_set_child(play_snake,snake_hard,2);
+ 
 
   MENU_set_child(start_game,pong_easy,0);
   MENU_set_child(start_game,pong_medium,1);
-  MENU_set_child(start_game,pong_hard,2);
+ 
 
 
  // MENU_set_child(start_game,);
@@ -95,7 +111,7 @@ void MENU_init_menus(void){
   MENU_set_child(highscores, show_highscores,0);
   MENU_set_child(highscores,reset_highscores, 1);
   //maybe more children to come
-
+  main_global_menu = main_menu;
   current_menu = main_menu;
   MENU_print_menu(current_menu);
 }
@@ -138,7 +154,7 @@ void MENU_arrow_creation(MENU_arrow_t *arrow){
 
 void MENU_arrow_get_position(MENU_arrow_t *arrow) {
   JOYSTICK_position_t joystick = JOYSTICK_get_position_scaled();
-  arrow->prev_pos.x_position = joystick.x_position;
+  //arrow->prev_pos.x_position = joystick.x_position;
   arrow->prev_pos.y_position = joystick.y_position;
 }
 
@@ -148,7 +164,7 @@ JOYSTICK_direction_t MENU_move_arrow(MENU_arrow_t *arrow){
     case DOWN:
       if (arrow->prev_dir == NEUTRAL){
         arrow->prev_dir = DOWN;
-        if (MENU_set_arrow(arrow,arrow->arrow_page+2)) {
+        if (MENU_set_arrow(arrow,arrow->arrow_page+2,current_menu)){
           arrow->arrow_page += 2;
         }
         return DOWN;
@@ -156,13 +172,13 @@ JOYSTICK_direction_t MENU_move_arrow(MENU_arrow_t *arrow){
     case UP:
       if (arrow->prev_dir == NEUTRAL){
         arrow->prev_dir = UP;
-        if (MENU_set_arrow(arrow,arrow->arrow_page-2)) {
+        if (MENU_set_arrow(arrow,arrow->arrow_page-2,current_menu)) {
           arrow->arrow_page -= 2;
         }
         return UP;
       }
     case NEUTRAL:
-      MENU_set_arrow(arrow, arrow->arrow_page);
+      MENU_set_arrow(arrow, arrow->arrow_page,current_menu);
       arrow->prev_dir = NEUTRAL;
       return NEUTRAL;
     default:
@@ -171,11 +187,11 @@ JOYSTICK_direction_t MENU_move_arrow(MENU_arrow_t *arrow){
  }
 
 
-int MENU_set_arrow(MENU_arrow_t *arrow, uint8_t page){
+int MENU_set_arrow(MENU_arrow_t *arrow, uint8_t page, volatile MENU_t *menu){
   if (page <= 0) {
     return 0;
   }
-  if (page >= 5) {
+  else if (page >= 5) {
     return 0;
   }
   else{
@@ -199,7 +215,7 @@ void MENU_select_menu(MENU_arrow_t *arrow){
         // Starting game
         if (current_menu == game_menu)
         {
-          start_game = PLAY_PONG;
+          state = PLAY_PONG;
         }
         //
       }
@@ -215,11 +231,31 @@ void MENU_select_menu(MENU_arrow_t *arrow){
 
 //
 
-uint8_t MENU_start_game(){
-  return start_game;
+uint8_t MENU_return_state(){
+  return state;
 }
 
+
+
 void MENU_game_over(){
-    current_menu = game_over_menu;
-    MENU_print_menu(current_menu);
+
+    MENU_print_menu(game_over_menu);
+    //current_menu = main_global_menu;
+    //MENU_init_menus();
+    //MENU_arrow_creation(&arrow);
+    //MENU_select_menu(&arrow);
 }
+
+
+
+void MENU_return(MENU_arrow_t *arrow){
+    OLED_clear();
+    //MENU_init_menus();
+    current_menu = main_menu;
+    MENU_print_menu(main_menu);
+    MENU_arrow_creation(arrow);
+    state = MENU;
+}
+
+
+  

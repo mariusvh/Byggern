@@ -25,8 +25,9 @@
 
 CAN_MESSAGE_t *m_receive;
 CAN_MESSAGE_t *message;
-
+MENU_arrow_t arrow;
 MENU_game_state_t STATE = MENU;
+//uint8_t game_finished = 0;
 
 
 int main() {
@@ -35,7 +36,6 @@ int main() {
   OLED_init_program();
   int btn_pressed = 0;
 
-  MENU_arrow_t arrow;
   MENU_init_menus();
   MENU_arrow_creation(&arrow);
 
@@ -54,11 +54,12 @@ int main() {
     switch (STATE)
     {
     case MENU:
+      //printf("menu:\n\r");
       MENU_move_arrow(&arrow);
       if (btn_pressed == 0 && SLIDER_right_button() || btn_pressed == 0 && SLIDER_left_button()){
         MENU_select_menu(&arrow);
         btn_pressed = 1;
-        STATE = MENU_start_game();
+        STATE = MENU_return_state();
       }
       if (!SLIDER_right_button() && !SLIDER_left_button()) {
         btn_pressed = 0;
@@ -76,7 +77,8 @@ int main() {
       break;
 
     case GAMEOVER:
-      //printf("GAMEOVER");
+      printf("Game over");
+      STATE = MENU;
       break;
 
     default:
@@ -93,6 +95,14 @@ ISR(INT2_vect){
   {
     STATE = GAMEOVER;
     MENU_game_over();
+    //MENU_move_arrow(&arrow);
+    //MENU_select_menu(&arrow);
+    //STATE = MENU;
+    MENU_return(&arrow);
+
+    //// need to clear this after we have lost
+    m_receive->data[0] = 0;
+    //printf("State: %d\n\r", STATE);
   }
   printf("Received: %d\n\r", m_receive->data[0]);
 }

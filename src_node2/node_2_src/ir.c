@@ -80,3 +80,7 @@ uint8_t IR_game_over(){
 uint8_t IR_return_score(){
     return score;
 }
+
+void IR_clear_score(){
+    score = 0;
+}

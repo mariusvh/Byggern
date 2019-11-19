@@ -8,29 +8,29 @@
 
 void MELODY_init(uint8_t pwm_frec){
     /*mode 14, fast PWM*/
-    TCCR3B |= (1 << WGM33)|(1<<WGM32);
-    TCCR3A |=(1<<WGM31);
-    TCCR3A &= ~(1<<WGM30);
+    TCCR5B |= (1 << WGM53)|(1<<WGM52);
+    TCCR5A |=(1<<WGM51);
+    TCCR5A &= ~(1<<WGM50);
 
     int prescaler_divider = 256;
     /*Select clock source, prescaler divider = 256*/
-    TCCR3B |= (1<<CS32);
-    TCCR3B &= ~(1<<CS31);
-    TCCR3B &= ~(1<<CS30);
+    TCCR5B |= (1<<CS52);
+    TCCR5B &= ~(1<<CS51);
+    TCCR5B &= ~(1<<CS50);
 
     /*PB5/OC1A set to output mode*/
     DDRH |= (1<<PH5);
 
     /*Compare Output Mode, inverting, fast pwm*/ //Update: change to non-inverting mode
-    TCCR3A |= (1<<COM3A1);
-    TCCR3A &= ~(1<<COM3A0);
+    TCCR5A |= (1<<COM5A1);
+    TCCR5A &= ~(1<<COM5A0);
 
     /*set TOP, period related*/
     int TOP = (FOSC)/(prescaler_divider*pwm_frec) - 1;
-    ICR3 = TOP; //1249
+    ICR5 = TOP; //1249
 
     /*duty cycle init*/
-    OCR3A = (DUTY_MAX+DUTY_MIN)/2;
+    OCR5A = (DUTY_MAX+DUTY_MIN)/2;
 }
 
 
@@ -42,17 +42,17 @@ void MELODY_set_duty_cycle(uint8_t duty_cycle_us){
     
     if(duty_scaled < DUTY_MIN)
     {
-        OCR3A = DUTY_MIN;
+        OCR5A = DUTY_MIN;
         return;
     }
 
     if(duty_scaled > DUTY_MAX)
     {
-        OCR3A = DUTY_MAX;
+        OCR5A = DUTY_MAX;
         return;
     }
 
-    OCR3A = duty_scaled;
+    OCR5A = duty_scaled;
 }
 
 // Virker som man kan gjøre dette med PWM
@@ -84,7 +84,7 @@ void MELODY_play(int song_part){
             int duration = 1000/underworld_tempo[i];
             MELODY_buzz(underworld_melody[i], duration);
 
-            int pause = duration*100.30;
+            int pause = duration*1.30;
             _delay_us(pause);
             MELODY_buzz(0, duration);
         }
@@ -99,7 +99,7 @@ void MELODY_play(int song_part){
             int duration = 1000/tempo[i];
             MELODY_buzz(melody[i], duration);
 
-            int pause = duration*100.30;
+            int pause = duration*1.30;
             _delay_us(pause);
             MELODY_buzz(0, duration);
         }

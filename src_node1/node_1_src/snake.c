@@ -45,7 +45,7 @@ void SNAKE_draw_border(){
     // Bottom border
     for (uint8_t i = 0; i < 127; i++)
     {
-        OLED_set_start_page(1);
+        OLED_set_start_page(7);
         OLED_set_col(i);
         for (uint8_t j = 0; j < 8; j++) {
         char char_out = (char) pgm_read_byte(&SNAKE_font8[102][j]); //top
@@ -66,7 +66,7 @@ void SNAKE_draw_border(){
     for (uint8_t i = 0; i < 8; i++)
     {
         OLED_set_start_page(i);
-        OLED_set_col(0);
+        OLED_set_col(120);
         for (uint8_t j = 0; j < 8; j++) {
         char char_out = (char) pgm_read_byte(&SNAKE_font8[104][j]); //right
         OLED_write_data(char_out);
