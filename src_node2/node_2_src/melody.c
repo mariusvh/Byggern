@@ -12,8 +12,8 @@ void MELODY_init(uint8_t pwm_frec){
     TCCR3A |=(1<<WGM31);
     TCCR3A &= ~(1<<WGM30);
 
-    int prescaler_divider = 256;
-    /*Select clock source, prescaler divider = 256*/
+    int prescaler_divider = 64;
+    /*Select clock source, prescaler divider = 64*/
     TCCR3B |= (1<<CS32);
     TCCR3B &= ~(1<<CS31);
     TCCR3B &= ~(1<<CS30);

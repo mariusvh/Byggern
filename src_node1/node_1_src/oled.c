@@ -99,12 +99,12 @@ void OLED_clear(void){
   OLED_write_command(0x02);
 }
 
-void OLED_print_arrow(uint8_t start_col, uint8_t start_row){
+void OLED_print_arrow(uint8_t start_col, uint8_t start_page){
   // Set to page adressing mode
   OLED_write_command(0x20);
   OLED_write_command(0x02);
   OLED_set_col(start_col);
-  OLED_set_start_page(start_row);
+  OLED_set_start_page(start_page);
   OLED_write_data(0b00011000);
   OLED_write_data(0b00011000);
   OLED_write_data(0b01111110);

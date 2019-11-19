@@ -100,34 +100,6 @@ void MENU_init_menus(void){
   MENU_print_menu(current_menu);
 }
 
-/*void MENU_creation(MENU_t *main_menu, MENU_t *highscores, MENU_t *show_highscores, MENU_t *reset_highscores, MENU_t *start_new_game, MENU_t *play_snake) {
-  main_menu->menu_title = "MAIN MENU";
-  main_menu->parent = NULL;
-  main_menu->child_array = malloc(sizeof(MENU_t*)*2);
-  main_menu->child_array[0] = highscores;
-  main_menu->child_array[1] = start_new_game;
-  printf("%s\n",main_menu->menu_title);
-
-  highscores->menu_title = "HIGHSCORES";
-  highscores->parent = main_menu;
-  highscores->child_array = malloc(sizeof(MENU_t*)*2);
-  highscores->child_array[0] = show_highscores;
-  highscores->child_array[1] = reset_highscores;
-
-  show_highscores->menu_title = "SHOW HIGHSCORES";
-  show_highscores->parent = highscores;
-
-  reset_highscores->menu_title = "RESET HIGHSCORES";
-  reset_highscores->parent = highscores;
-
-  start_new_game->menu_title = "START NEW GAME";
-  start_new_game->parent = main_menu;
-
-  play_snake->menu_title = "PLAYING SNAKE";
-  play_snake->parent = start_new_game;
-
-}*/
-
 void MENU_arrow_creation(MENU_arrow_t *arrow){
   arrow->arrow_page = 2;
   arrow->prev_dir = NEUTRAL;
@@ -136,11 +108,12 @@ void MENU_arrow_creation(MENU_arrow_t *arrow){
   OLED_print_arrow(ARROW_COL,2);
 }
 
-void MENU_arrow_get_position(MENU_arrow_t *arrow) {
+/*void MENU_arrow_get_position(MENU_arrow_t *arrow) {
   JOYSTICK_position_t joystick = JOYSTICK_get_position_scaled();
   arrow->prev_pos.x_position = joystick.x_position;
   arrow->prev_pos.y_position = joystick.y_position;
 }
+*/
 
 JOYSTICK_direction_t MENU_move_arrow(MENU_arrow_t *arrow){
   JOYSTICK_direction_t dir = JOYSTICK_get_direction();

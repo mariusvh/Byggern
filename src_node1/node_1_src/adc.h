@@ -9,19 +9,28 @@
 #define ADC_H
 #include <avr/io.h>
 
+/**
+ * @defgroup TIMING_CONSTANTS Timing Constants(periods)
+ *
+ * @{
+ */
+
+/** Period between... */
 #define T_C 40
+/** Period between... */
 #define T_DS 0.1
+/** Period between... */
 #define T_DH 0.05
+/** Period between... */
 #define T_WI 0.4
+/** Period between... */
 #define T_RI 0.4
 
 
 /**
  * @brief Initializing the ADC. 
  * Enables external memory and defines the length of the external memory adresses.
- * 
  */
-
 void ADC_init(void);
 
 /**
