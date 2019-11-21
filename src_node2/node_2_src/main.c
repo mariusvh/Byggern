@@ -59,8 +59,6 @@ int main() {
     MELODY_play(1);
     MELODY_play(2);
   }*/
-  
-
   game_over = 0;
   static uint8_t score_limit = 2;
 
@@ -69,17 +67,20 @@ int main() {
 
     lives = IR_count_scores();
 
-    while (!(rec))
+    while (rec<10)
     {
         game_over = 0;
         lives = 0;
+        printf("loop \n\r");
     }
     
 
     if (lives < score_limit)//IR_game_over() != 1)
     {
+      printf("lives<score_limit \n\r");
       //printf("run_pid: %d\n\r", run_pid);
       if(run_pid){
+        printf("run_pid \n\r");
         PID_regulator();
         //run_pid = 0;
       }
@@ -88,20 +89,12 @@ int main() {
      // After game
     else if (!game_over){
 
-        printf("Sending: %d\n\r",m_send->data[0]);
         CAN_construct_message(m_send, score_limit, 0, 1);
+        printf("Sending: %d\n\r",m_send->data[0]);
         CAN_send_message(m_send);
         IR_clear_score();
         game_over = 1;
         rec = 0;
-        //score_limit = 0;
-        //CAN_construct_message(m_send, score_limit, 0, 1);
-        //CAN_send_message(m_send);
-        /* 
-        printf("Sending: %d\n\r",m_send->data[0]);
-        uint16_t score = IR_count_scores();
-        CAN_construct_message(m_send, score, 1, 1);
-        CAN_send_message(m_send);*/
     }
 
     run_pid = 0;
@@ -114,7 +107,7 @@ int main() {
 ISR(INT2_vect){
   if (lives < 2)//IR_game_over() != 1)
   {
-    rec = 1;
+    rec += 1;
     CAN_receive_message(0,m_rec);
     SERVO_set_position(m_rec->data[0]);
     PID_update_reference(m_rec->data[2]);
@@ -128,12 +121,9 @@ ISR(INT2_vect){
       btn_pressed = 0;
     }
   }
-
-  
 }
 
 ISR(TIMER3_COMPA_vect){
   run_pid = 1;
-  //printf("TIMER3 \n\r");
   TCNT3 = 0x00;
 }

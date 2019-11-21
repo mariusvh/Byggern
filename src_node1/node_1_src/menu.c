@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include "slider.h"
 
+#define F_CPU 4915200
+#include <util/delay.h>
+
 volatile MENU_t *current_menu;
 volatile MENU_t *game_menu;
 volatile MENU_t *main_global_menu;
@@ -240,6 +243,7 @@ uint8_t MENU_return_state(){
 void MENU_game_over(){
 
     MENU_print_menu(game_over_menu);
+    _delay_ms(1000);
     //current_menu = main_global_menu;
     //MENU_init_menus();
     //MENU_arrow_creation(&arrow);

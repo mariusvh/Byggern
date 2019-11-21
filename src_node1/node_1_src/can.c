@@ -165,11 +165,11 @@ void CAN_send_controllers_filter(CAN_MESSAGE_t *message){
   message->data[3] = left_button; //sliders.left_slider; //left_slider;
   message->data[4] = right_button; // 
   message->length = 5; //4
-  //printf("x: %d\n\r", message->data[0]);
+  printf("x: %d\n\r", message->data[0]);
   //printf("Right button: %d\n\r", message->data[4]);
   
   //printf("y: %d\n\r", message->data[1]);
-  //printf("Right slider: %d\n\r", message->data[2]);
+  printf("Right slider: %d\n\r", message->data[2]);
  // printf("Right_ADC: %d\n\r", right_slider);
   //printf("Left slider: %d\n\r", message->data[3]);
   /*Filter, we only send slider position when new postion is set*/

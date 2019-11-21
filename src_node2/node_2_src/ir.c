@@ -48,7 +48,7 @@ uint16_t IR_digital_filter(){
 
 uint16_t IR_count_scores(){
     /*Sliders intterupt for some reason*/
-    uint16_t score_threshold = 5;
+    uint16_t score_threshold = 20;
     uint16_t no_score_threshold = 80;
     if (IR_digital_filter() <= score_threshold && flag == 0)
     {   
