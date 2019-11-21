@@ -34,7 +34,8 @@ typedef enum
 	MENU = 0,
 	PLAY_PONG = 1,
   GAMEOVER = 2,
-  PLAY_SNAKE = 3
+  PLAY_SNAKE = 3,
+  PLAY_PONG_H = 4
 }MENU_game_state_t;
 
 //

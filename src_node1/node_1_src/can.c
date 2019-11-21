@@ -149,7 +149,7 @@ void CAN_send_joystick_position(CAN_MESSAGE_t *message){
 
 
 
-void CAN_send_controllers_filter(CAN_MESSAGE_t *message){
+void CAN_send_controllers_filter(CAN_MESSAGE_t *message, int pong_lives){
   uint8_t right_slider = ADC_read_right_slider();
  // uint8_t left_slider = ADC_read_left_slider();
   JOYSTICK_position_t joystick = JOYSTICK_get_position_scaled();
@@ -162,7 +162,7 @@ void CAN_send_controllers_filter(CAN_MESSAGE_t *message){
   message->data[0] = joystick.x_position;
   message->data[1] = joystick.y_position;
   message->data[2] = sliders.right_slider; //right_slider;
-  message->data[3] = left_button; //sliders.left_slider; //left_slider;
+  message->data[3] = pong_lives;//left_button; //sliders.left_slider; //left_slider;
   message->data[4] = right_button; // 
   message->length = 5; //4
   printf("x: %d\n\r", message->data[0]);

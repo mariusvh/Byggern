@@ -28,6 +28,7 @@ CAN_MESSAGE_t *message;
 MENU_arrow_t arrow;
 MENU_game_state_t STATE = MENU;
 //uint8_t game_finished = 0;
+int difficulty = 0;
 
 
 int main() {
@@ -67,8 +68,16 @@ int main() {
       break;
 
     case PLAY_PONG:
+      difficulty = 3;
       //_delay_ms(100);
-      CAN_send_controllers_filter(message);
+      CAN_send_controllers_filter(message,difficulty);
+      //printf("state: %d\n\r",STATE);
+      break;
+
+    case PLAY_PONG_H:
+      difficulty = 1;
+      //_delay_ms(100);
+      CAN_send_controllers_filter(message,difficulty);
       //printf("state: %d\n\r",STATE);
       break;
     
@@ -91,7 +100,7 @@ int main() {
 
 ISR(INT2_vect){
   CAN_receive_message(0,m_receive);
-  if (m_receive->data[0] > 1)
+  if (m_receive->data[0] >= difficulty)
   {
     STATE = GAMEOVER;
     MENU_game_over();

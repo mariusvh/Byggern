@@ -38,6 +38,7 @@ uint8_t right_button_index = 4;
 int btn_pressed = 0;
 int game_over = 0;
 uint8_t lives = 0;
+static uint8_t score_limit = 3;
 
 int main() {
   cli();
@@ -53,14 +54,9 @@ int main() {
 
   sei();
 
-  /*while (1)
-  {
-    MELODY_play(1);
-    MELODY_play(1);
-    MELODY_play(2);
-  }*/
+  
   game_over = 0;
-  static uint8_t score_limit = 2;
+  
 
   while (1)
   { 
@@ -105,10 +101,11 @@ int main() {
 }
 
 ISR(INT2_vect){
-  if (lives < 2)//IR_game_over() != 1)
+  if (lives < score_limit)//IR_game_over() != 1)
   {
     rec += 1;
     CAN_receive_message(0,m_rec);
+    score_limit = m_rec->data[3];
     SERVO_set_position(m_rec->data[0]);
     PID_update_reference(m_rec->data[2]);
     if (btn_pressed == 0 && m_rec->data[right_button_index])

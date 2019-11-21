@@ -216,9 +216,13 @@ void MENU_select_menu(MENU_arrow_t *arrow){
         current_menu = current_menu->child_array[i];
         MENU_print_menu(current_menu);
         // Starting game
-        if (current_menu == game_menu)
+        if (current_menu == pong_easy)
         {
           state = PLAY_PONG;
+        }
+        if (current_menu == pong_medium)
+        {
+          state = PLAY_PONG_H;
         }
         //
       }
@@ -243,7 +247,8 @@ uint8_t MENU_return_state(){
 void MENU_game_over(){
 
     MENU_print_menu(game_over_menu);
-    _delay_ms(1000);
+
+    _delay_ms(5000);
     //current_menu = main_global_menu;
     //MENU_init_menus();
     //MENU_arrow_creation(&arrow);

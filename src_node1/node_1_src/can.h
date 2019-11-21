@@ -60,7 +60,9 @@ void CAN_send_joystick_position(CAN_MESSAGE_t *message);
  * and the output from the right and left button onto the CAN bus.
  * 
  * @param message The message that is beeing sent.
+ * @param pong_lives The amount of lives in pong game.
  */
-void CAN_send_controllers_filter(CAN_MESSAGE_t *message);
+
+void CAN_send_controllers_filter(CAN_MESSAGE_t *message, int pong_lives);
 
 #endif
